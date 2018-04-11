@@ -7,6 +7,11 @@ Jednoduchá implementace pro správu sportovního klubu vrámci předmětu BI-SI
 - DB - sqlite + SQLAlchemy
 - IDE - PyCharm (https://www.jetbrains.com/pycharm/)
 
+### Moduly pro python
+- flask - webový framework
+- SQLAlchemy - DB ORM
+- flask-login - login handling
+
 ### Instalace na OSX
 - **brew** - viz https://brew.sh/index_cs
 - **python3** - brew install python3
