@@ -8,7 +8,7 @@ python3
 >>> db.create_all()
 >>> exit()
 
-# DB file now contains the member table
+# DB file now contains the member table, lets insert an user
 sqlite3 database/database.db 
 sqlite> .tables
 member
