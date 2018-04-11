@@ -1,4 +1,4 @@
-from source.main import app
+from source.spravujklub import app
 import sys
 
 if __name__ == "__main__":
