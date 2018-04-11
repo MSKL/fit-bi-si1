@@ -1,0 +1,10 @@
+python3
+>>> from main import db
+>>> db.create_all()
+>>> exit()
+
+sqlite3 database/database.db 
+sqlite> .tables
+member
+sqlite> insert into member values (0, "Čenda", "cenda@cendovajeskyne.cz");
+sqlite> .exit
