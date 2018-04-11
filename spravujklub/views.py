@@ -7,6 +7,7 @@ from models import Member
 def index():
     name = request.values.get("name")
     email = request.values.get("mail")
+    delete = request.values.get("delete")
 
     if name and email:
         # Create a new member
@@ -14,6 +15,11 @@ def index():
         # Add it to the database session
         db.session.add(new_member)
         # Commit the change to the DB
+        db.session.commit()
+
+    if delete:
+        memb = db.session.query(Member).get(delete)
+        db.session.delete(memb)
         db.session.commit()
 
     # Get all members from the DB

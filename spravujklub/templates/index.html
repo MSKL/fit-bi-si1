@@ -10,8 +10,15 @@
 	  <br>
 	  <input type="submit" value="Submit">
 	</form>
+	<br>
+	<form action="/" method="get">
+	  ID to delete: <br>
+	  <input type="number" name="delete" value="">
+	  <br>
+	  <input type="submit" value="Delete">
+	</form>
 
-	<h3>All members in database</h3>
+	<h3>All members in the database</h3>
 	<table>
 		{% for member in members %}
 			<tr>
