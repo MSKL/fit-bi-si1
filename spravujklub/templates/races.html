@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container-fluid tab-content">
+
+        <h1>Test races</h1>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="mainTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Place</th>
+                    <th>Date</th>
+                    <th>Registered</th>
+                    <th>Registration</th>
+                </tr>
+                </thead>
+                <tbody id="displayArea">
+                {% for race in races %}
+                    <tr>
+                        <td>{{ race.id }}</td>
+                        <td>{{ race.name }}</td>
+                        <td>{{ race.place }}</td>
+                        <td>{{ race.date }}</td>
+                        <td>{% if race.user_registered %}
+                            Registered </td>
+                            <td><button>Register</button></td>
+                        {% else %} Unregistered </td></td>
+                            <td><button>View</button></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
