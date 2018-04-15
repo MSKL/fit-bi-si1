@@ -11,6 +11,7 @@ Jednoduchá implementace systému pro správu sportovního klubu vrámci předm�
 - flask - webový framework
 - SQLAlchemy - DB ORM
 - flask-login - login handling
+- flask-bootstrap - webový css a js framework
 
 ### Instalace na OSX
 - **brew** - viz https://brew.sh/index_cs
