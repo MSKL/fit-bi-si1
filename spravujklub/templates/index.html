@@ -1,31 +1,106 @@
-{% extends "base.html" %}
+{% extends "bootstrap/base.html" %}
+{% block title %}This is an example page{% endblock %}
 
-{% block main %}
-	<form action="/" method="get">
-	  Name: <br>
-	  <input type="text" name="name" value="">
-	  <br>
-	  Email: <br>
-	  <input type="text" name="mail" value="">
-	  <br>
-	  <input type="submit" value="Submit">
-	</form>
-	<br>
-	<form action="/" method="get">
-	  ID to delete: <br>
-	  <input type="number" name="delete" value="">
-	  <br>
-	  <input type="submit" value="Delete">
-	</form>
+{% block navbar %}
+    </nav><nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button"
+                    class="navbar-toggle collapsed"
+                    data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1"
+                    aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
 
-	<h3>All members in the database</h3>
-	<table>
-		{% for member in members %}
-			<tr>
-				<td>{{ member.id }}</td>
-				<td>{{ member.name }}</td>
-				<td>{{ member.email }}</td>
-			</tr>
-		{% endfor %}
-	</table>
+            <a class="navbar-brand" href="#">{{ title }}</a>
+
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="#main">Races<span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#archive">Trainings</a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#profile">{{ name }}</a>
+                </li>
+                <li>
+                    <button type="button"
+                            class="btn btn-default navbar-btn"
+                            id="signIn_button">Odhlásit se
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+{% block content %}
+
+    <div class="container-fluid tab-content">
+
+        <form action="/" role="form">
+            <h3>Add user</h3>
+            <div class="form-group">
+                <label for="inputProduct">Name</label>
+                <input type="text" class="form-control" name="name" placeholder="Name">
+            </div>
+            <div class="form-group">
+                <label for="inputPrice">Email</label>
+                <input type="text" class="form-control" name="mail" placeholder="Email" >
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-default">Add</button>
+            </div>
+
+        </form>
+
+
+        <form action="/" role="form">
+            <div class="form-group">
+                <label for="inputPrice">ID to delete</label>
+                <input type="text" class="form-control" name="delete" placeholder="ID" >
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-default">Delete</button>
+            </div>
+        </form>
+
+        <h3>All members in the database</h3>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="mainTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+                <tbody id="displayArea">
+                {% for member in members %}
+                    <tr>
+                        <td>{{ member.id }}</td>
+                        <td>{{ member.name }}</td>
+                        <td>{{ member.email }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 {% endblock %}

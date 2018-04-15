@@ -1,8 +1,10 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
 
 # The flask application
 app = Flask("__name__")
+Bootstrap(app)
 
 # Setup the config from file
 app.config.from_pyfile("config.py")
