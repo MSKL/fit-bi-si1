@@ -26,4 +26,4 @@ def index():
     members = Member.query.all()
 
     # Render the template
-    return render_template("index.html", title='Index - Members', members=members)
+    return render_template("index.html", members=members, title="SpravujKlub", name="Lukas")
