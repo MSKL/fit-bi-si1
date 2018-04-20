@@ -1,56 +1,56 @@
 {% extends "bootstrap/base.html" %}
-{% block title %}Test{% endblock %}
 
 <body>
     <div id="header">
         {% block header %}
-        {% block navbar %}
-            <nav class="navbar navbar-inverse">
-                <div class="container-fluid">
-                    <!-- Brand and toggle get grouped for better mobile display -->
-                    <div class="navbar-header">
-                        <button type="button"
-                                class="navbar-toggle collapsed"
-                                data-toggle="collapse"
-                                data-target="#bs-example-navbar-collapse-1"
-                                aria-expanded="false">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
+			{% block navbar %}
+				<nav class="navbar navbar-inverse">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+							<button type="button"
+									class="navbar-toggle collapsed"
+									data-toggle="collapse"
+									data-target="#bs-example-navbar-collapse-1"
+									aria-expanded="false">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
 
-                        <a class="navbar-brand" href="{{ url_for('index') }}">SpravujKlub</a>
+							<a class="navbar-brand" href="{{ url_for('index') }}">SpravujKlub</a>
 
-                    </div>
+						</div>
 
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                            <li>
-                                <a href="{{ url_for('races') }}">Races
-                                </a>
-                            </li>
-                            <li>
-                                <a>Trainings</a>
-                            </li>
-                        </ul>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav">
+								<li>
+									<a href="{{ url_for('races') }}">Races</a>
+								</li>
+								<li>
+									<a>Restricted</a>
+								</li>
+								<li>
+									<a>Login</a>
+								</li>
+							</ul>
 
-                        <ul class="nav navbar-nav navbar-right">
-                            <li>
-                                <a href="{{ url_for('profile') }}">{{ user.name }}</a>
-                            </li>
-                            <li>
-                                <button type="button"
-                                        class="btn btn-default navbar-btn"
-                                        id="signIn_button">Odhlásit se
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        {% endblock %}
+							<ul class="nav navbar-nav navbar-right">
+								<li>
+									<a href="{{ url_for('profile') }}">{{ user.name }}</a>
+								</li>
+								<li>
+									<button type="button" class="btn btn-default navbar-btn" id="signIn_button">
+										Odhlásit se
+									</button>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			{% endblock %}
         {% endblock %}
     </div>
     <div id="main">

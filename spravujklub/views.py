@@ -1,6 +1,5 @@
 from flask import request, render_template
 from entities.Race import Race
-from entities.User import User
 from main import app, db
 from models import Member
 import flask_login
@@ -31,7 +30,7 @@ def index():
     members = Member.query.all()
 
     # Render the template
-    return render_template("index.html", members=members, title="SpravujKlub", user=User("Lukas", "test@test.cz"))
+    return render_template("index.html", members=members, title="SpravujKlub", user=Member("Lukas", "test@test.cz", "1234"))
 
 
 @app.route('/races', methods=['GET'])
@@ -42,17 +41,29 @@ def races():
     races.append(Race("Zavod3", "Racetown", datetime.date(2018, 1,8), False))
     races.append(Race("Zavod4", "Zavodnikov", datetime.date(2018, 1,8), True))
     # Render the template
-    return render_template("races.html", races=races, user=User("Lukas", "test@test.cz"))
+    return render_template("races.html", races=races, user=Member("Lukas", "test@test.cz", "1234"))
+
+
+@app.route('/race_detail', methods=['GET'])
+def race_detail():
+    # TODO: Make race detail page (editable)
+    pass
 
 
 @app.route('/profile', methods=[ 'GET' ])
 def profile():
-        # TODO
-        # Render the template
-        return render_template("profile.html", user=User("Lukas", "test@test.cz"))
+    # TODO: Make the user's profile page
+    return render_template("profile.html", user=Member("Lukas", "test@test.cz", "1234"))
+
+
+@app.route('/login', methods= [ 'POST' ])
+def login():
+    # TODO: Make the login page
+    pass
 
 
 @flask_login.login_required
 @app.route('/restricted')
 def restricted():
+    """just a test site to see if the auth works"""
     return "User must be logged in to see this!"
