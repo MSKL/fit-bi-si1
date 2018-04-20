@@ -1,9 +1,9 @@
 from flask import request, render_template
-
 from entities.Race import Race
 from entities.User import User
 from main import app, db
 from models import Member
+import flask_login
 import datetime
 
 
@@ -11,11 +11,12 @@ import datetime
 def index():
     name = request.values.get("name")
     email = request.values.get("mail")
+    password = request.values.get("password")
     delete = request.values.get("delete")
 
     if name and email:
         # Create a new member
-        new_member = Member(name=name, email=email)
+        new_member = Member(name=name, email=email, password=password)
         # Add it to the database session
         db.session.add(new_member)
         # Commit the change to the DB
@@ -32,6 +33,7 @@ def index():
     # Render the template
     return render_template("index.html", members=members, title="SpravujKlub", user=User("Lukas", "test@test.cz"))
 
+
 @app.route('/races', methods=['GET'])
 def races():
     races = []
@@ -42,8 +44,15 @@ def races():
     # Render the template
     return render_template("races.html", races=races, user=User("Lukas", "test@test.cz"))
 
+
 @app.route('/profile', methods=[ 'GET' ])
 def profile():
         # TODO
         # Render the template
         return render_template("profile.html", user=User("Lukas", "test@test.cz"))
+
+
+@flask_login.login_required
+@app.route('/restricted')
+def restricted():
+    return "User must be logged in to see this!"

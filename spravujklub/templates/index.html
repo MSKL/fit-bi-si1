@@ -5,14 +5,18 @@
     <div class="container-fluid tab-content">
 
         <form action="/" role="form">
-            <h3>Add user</h3>
+            <h3>Přidat uživatele</h3>
             <div class="form-group">
-                <label for="inputProduct">Name</label>
+                <label for="inputProduct">Jméno</label>
                 <input type="text" class="form-control" name="name" placeholder="Name">
             </div>
             <div class="form-group">
                 <label for="inputPrice">Email</label>
                 <input type="text" class="form-control" name="mail" placeholder="Email" >
+            </div>
+			<div class="form-group">
+                <label for="inputPrice">Heslo</label>
+                <input type="text" class="form-control" name="password" placeholder="Password" >
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-default">Add</button>
@@ -23,7 +27,7 @@
 
         <form action="/" role="form">
             <div class="form-group">
-                <label for="inputPrice">ID to delete</label>
+                <label for="inputPrice">ID pro smazání</label>
                 <input type="text" class="form-control" name="delete" placeholder="ID" >
             </div>
             <div class="form-group">
@@ -31,7 +35,7 @@
             </div>
         </form>
 
-        <h3>All members in the database</h3>
+        <h3>Všichni členové v databázi</h3>
 
         <div class="table-responsive">
             <table class="table table-bordered" id="mainTable">
@@ -40,6 +44,7 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
+					<th>Password</th>
                 </tr>
                 </thead>
                 <tbody id="displayArea">
@@ -48,6 +53,7 @@
                         <td>{{ member.id }}</td>
                         <td>{{ member.name }}</td>
                         <td>{{ member.email }}</td>
+						<td>{{ member.password }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
