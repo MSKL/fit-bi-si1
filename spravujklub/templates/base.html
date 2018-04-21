@@ -31,7 +31,7 @@
 							<ul class="nav navbar-nav navbar-right">
 								{% if current_user.is_authenticated %}
 									<li>
-										<a href="#">Přihlášen uživatel {{ current_user.name }}</a>
+										<a href="{{ url_for('profile', user_id=current_user.id ) }}">Přihlášen uživatel {{ current_user.name }}</a>
 									</li>
 									<li>
 										<button type="button" onclick="location.href='/logout'" class="btn btn-default navbar-btn" id="signIn_button">Odhlásit se</button>

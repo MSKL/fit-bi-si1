@@ -9,7 +9,10 @@ import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
-    """should take the unicode ID of a user, and return the corresponding user object"""
+    """
+    Should take the unicode ID of a user, and return the corresponding user object.
+    This function if required by the flask_login
+    """
     return db.session.query(Member).get(user_id)
 
 
@@ -61,21 +64,24 @@ def race_edit():
     pass
 
 
-# @app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])
-# @login_required # TODO: Anybody can view any member's page ATM. NOT TESTED.
-# def profile(user_id):
-#    if request.method == 'GET':
-#        """return the information for <user_id>"""
-#    if request.method == 'POST':
-#        """modify/update the information for <user_id>"""
-#        data = request.form  # a multidict containing POST data
-#    if request.method == 'DELETE':
-#        """delete user with ID <user_id>"""
-#    else:
-#        # POST Error 405 Method Not Allowed
-#        pass
-#
-#    return "Not implemented yet."
+@app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])
+@login_required
+def profile(user_id):
+    # TODO: Anybody can view any member's page ATM.
+
+    if request.method == 'GET':
+        """return the information for <user_id>"""
+    if request.method == 'POST':
+        """modify/update the information for <user_id>"""
+        # a multidict containing POST data
+        data = request.form
+    if request.method == 'DELETE':
+        """delete user with ID <user_id>"""
+    else:
+        # POST Error 405 Method Not Allowed
+        pass
+
+    return "Not implemented yet."
 
 
 @app.route('/login', methods=['GET', 'POST'])
