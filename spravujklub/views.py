@@ -9,13 +9,16 @@ from functions import app_login_user, app_create_user, app_delete_user_by_id
 
 
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
     # Testing adding to the DB
     name = request.values.get("name")
     email = request.values.get("mail")
     password = request.values.get("password")
+
     # Testing deleting from DB
     delete = request.values.get("delete", type=int)
+
     # Testing login
     login_mail = request.values.get("login_mail")
     login_password = request.values.get("login_password")
@@ -34,29 +37,38 @@ def index():
 
 
 @app.route('/races', methods=['GET'])
+@login_required
 def races():
-    races = []
-    races.append(Race("Zavod1", "Zavodovice", datetime.date(2018, 1,8), True))
-    races.append(Race("Zavod2", "testtest", datetime.date(2018, 1,8), False))
-    races.append(Race("Zavod3", "Racetown", datetime.date(2018, 1,8), False))
-    races.append(Race("Zavod4", "Zavodnikov", datetime.date(2018, 1,8), True))
+    races_query = [Race("Zavod1", "Zavodovice", datetime.date(2018, 1, 8), True),
+                   Race("Zavod2", "testtest", datetime.date(2018, 1, 8), False),
+                   Race("Zavod3", "Racetown", datetime.date(2018, 1, 8), False),
+                   Race("Zavod4", "Zavodnikov", datetime.date(2018, 1, 8), True)]
     # Render the template
-    return render_template("races.html", races=races, user=Member("Lukas", "test@test.cz", "1234"))
+    return render_template("races.html", races=races_query)
 
 
 @app.route('/race_detail', methods=['GET'])
+@login_required
 def race_detail():
+    # TODO: Make race detail page (not editable)
+    pass
+
+
+@app.route('/race_edit', methods=['GET'])
+@login_required
+def race_edit():
     # TODO: Make race detail page (editable)
     pass
 
 
 @app.route('/profile', methods=['GET'])
+@login_required
 def profile():
     # TODO: Make the user's profile page
     return render_template("profile.html", user=Member("Lukas", "test@test.cz", "1234"))
 
 
-@app.route('/login', methods= ['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     # TODO: Make the login page
     pass
