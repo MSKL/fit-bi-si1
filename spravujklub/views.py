@@ -2,7 +2,7 @@ from flask import request, render_template, redirect
 from flask_login import login_required, login_user, logout_user, current_user
 
 from crypto import hash_password
-from functions import app_create_user, app_delete_user_by_id
+from functions import app_create_user, app_delete_user_by_id, app_login_user
 from entities.Race import Race
 from main import app, db, login_manager
 from models import Member
@@ -16,6 +16,7 @@ def load_user(user_id):
 
 
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
     print(current_user.is_authenticated)
 
@@ -88,12 +89,14 @@ def login():
             login_mail = request.form.get("login_mail")
             login_password = request.form.get("login_password")
             if login_mail and login_password:
-                user_to_login = db.session.query(Member).filter(Member.email == login_mail).first()
-                if user_to_login:
-                    hashed = hash_password(login_password, user_to_login.salt)
-                    if hashed == user_to_login.password:
-                        login_user(user_to_login)
-                        return redirect("/")
+                if app_login_user(login_mail, login_password):
+                    return redirect("/")
+                #user_to_login = db.session.query(Member).filter(Member.email == login_mail).first()
+                #if user_to_login:
+                #    hashed = hash_password(login_password, user_to_login.salt)
+                #    if hashed == user_to_login.password:
+                #        login_user(user_to_login)
+                #        return redirect("/")
 
     return render_template("login.html", title="Login")
 

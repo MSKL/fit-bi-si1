@@ -4,8 +4,14 @@ from models import Member
 from crypto import generate_salt, hash_password
 
 
-def app_login_user(login_password, login_mail):
-    pass
+def app_login_user(login_mail, login_password):
+    user_to_login = db.session.query(Member).filter(Member.email == login_mail).first()
+    if user_to_login:
+        hashed = hash_password(login_password, user_to_login.salt)
+        if hashed == user_to_login.password:
+            login_user(user_to_login)
+            return True
+    return False
 
 
 def app_create_user(name, email, password):
