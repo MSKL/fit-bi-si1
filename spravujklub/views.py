@@ -1,4 +1,4 @@
-from flask import request, render_template
+from flask import request, render_template, redirect
 from entities.Race import Race
 from main import app, db
 from models import Member
@@ -8,13 +8,18 @@ import datetime
 
 @app.route('/', methods=['GET'])
 def index():
+    # Testing adding to the DB
     name = request.values.get("name")
     email = request.values.get("mail")
     password = request.values.get("password")
+    # Testing deleting from DB
     delete = request.values.get("delete")
+    # Testing login
+    login_mail = request.values.get("login_mail")
+    login_password = request.values.get("login_password")
 
     if name and email:
-        # Create a new member
+        # Create a new memberą
         new_member = Member(name=name, email=email, password=password)
         # Add it to the database session
         db.session.add(new_member)
@@ -26,11 +31,20 @@ def index():
         db.session.delete(memb)
         db.session.commit()
 
+    if login_mail and login_password:
+        some_user = db.session.query(Member).filter(Member.email == login_mail).first()
+        if not some_user:
+            print("User not found")
+        else:
+            if login_password == some_user.password:
+                flask_login.login_user(some_user)
+                print("Logged in user %s" % some_user.email)
+
     # Get all members from the DB
     members = Member.query.all()
 
     # Render the template
-    return render_template("index.html", members=members, title="SpravujKlub", user=Member("Lukas", "test@test.cz", "1234"))
+    return render_template("index.html", members=members, title="SpravujKlub")
 
 
 @app.route('/races', methods=['GET'])
@@ -50,13 +64,13 @@ def race_detail():
     pass
 
 
-@app.route('/profile', methods=[ 'GET' ])
+@app.route('/profile', methods=['GET'])
 def profile():
     # TODO: Make the user's profile page
     return render_template("profile.html", user=Member("Lukas", "test@test.cz", "1234"))
 
 
-@app.route('/login', methods= [ 'POST' ])
+@app.route('/login', methods= ['POST'])
 def login():
     # TODO: Make the login page
     pass
@@ -67,3 +81,10 @@ def login():
 def restricted():
     """just a test site to see if the auth works"""
     return "User must be logged in to see this!"
+
+
+@app.route('/logout')
+def logout():
+    """Logs out the current user and then redirects to the index"""
+    flask_login.logout_user()
+    return redirect("/")

@@ -25,7 +25,8 @@ from views import *
 @login_manager.user_loader
 def load_user(user_id):
     """should take the unicode ID of a user, and return the corresponding user object"""
-    return Member.get(user_id)
+    #return Member.get(user_id)
+    return None
 
 
 if __name__ == '__main__':

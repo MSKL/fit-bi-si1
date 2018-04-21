@@ -3,7 +3,6 @@
 {% block content %}
 
     <div class="container-fluid tab-content">
-
         <form action="/" role="form">
             <h3>Přidat uživatele</h3>
             <div class="form-group">
@@ -21,9 +20,7 @@
             <div class="form-group">
                 <button type="submit" class="btn btn-default">Add</button>
             </div>
-
         </form>
-
 
         <form action="/" role="form">
             <div class="form-group">
@@ -34,6 +31,23 @@
                 <button type="submit" class="btn btn-default">Delete</button>
             </div>
         </form>
+
+		<form action="/" role="form">
+            <h3>Login</h3>
+            <div class="form-group">
+                <label for="inputPrice">Email</label>
+                <input type="text" class="form-control" name="login_mail" placeholder="Email" >
+            </div>
+			<div class="form-group">
+                <label for="inputPrice">Heslo</label>
+                <input type="text" class="form-control" name="login_password" placeholder="Password" >
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-default">Login</button>
+            </div>
+        </form>
+		<a href="/logout">Logout</a>
+
 
         <h3>Všichni členové v databázi</h3>
 
