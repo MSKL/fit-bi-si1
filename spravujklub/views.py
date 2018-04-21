@@ -1,12 +1,13 @@
 from flask import request, render_template, redirect
+from flask_login import login_required, login_user
 from entities.Race import Race
 from main import app, db
 from models import Member
-import flask_login
+from crypto import hash_password, generate_salt
 import datetime
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     # Testing adding to the DB
     name = request.values.get("name")
@@ -18,9 +19,11 @@ def index():
     login_mail = request.values.get("login_mail")
     login_password = request.values.get("login_password")
 
-    if name and email:
-        # Create a new memberą
-        new_member = Member(name=name, email=email, password=password)
+    if name and email and password:
+        # Create a new member
+        password_salt = generate_salt(16)
+        password_hash = hash_password(password, password_salt)
+        new_member = Member(name=name, email=email, password=password_hash, salt=password_salt)
         # Add it to the database session
         db.session.add(new_member)
         # Commit the change to the DB
@@ -36,8 +39,9 @@ def index():
         if not some_user:
             print("User not found")
         else:
-            if login_password == some_user.password:
-                flask_login.login_user(some_user)
+            hashed = hash_password(login_password, some_user.salt)
+            if hashed == some_user.password:
+                login_user(some_user)
                 print("Logged in user %s" % some_user.email)
 
     # Get all members from the DB
@@ -76,11 +80,11 @@ def login():
     pass
 
 
-@flask_login.login_required
 @app.route('/restricted')
+@login_required
 def restricted():
     """just a test site to see if the auth works"""
-    return "User must be logged in to see this!"
+    return "User is now logged in. Others can't see this.!"
 
 
 @app.route('/logout')

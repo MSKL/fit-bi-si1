@@ -58,7 +58,8 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
-					<th>Password</th>
+					<th>Password hash</th>
+					<th>Password salt</th>
                 </tr>
                 </thead>
                 <tbody id="displayArea">
@@ -68,6 +69,7 @@
                         <td>{{ member.name }}</td>
                         <td>{{ member.email }}</td>
 						<td>{{ member.password }}</td>
+						<td>{{ member.salt }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

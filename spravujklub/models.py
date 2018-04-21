@@ -1,4 +1,5 @@
 from main import db
+from crypto import generate_salt
 
 
 class Member(db.Model):
@@ -8,11 +9,13 @@ class Member(db.Model):
     name = db.Column(db.String(50))
     email = db.Column(db.String(50))
     password = db.Column(db.String(50))
+    salt = db.Column(db.String(16))
 
-    def __init__(self, name, email, password):
+    def __init__(self, name, email, password, salt):
         self.name = name
         self.email = email
         self.password = password
+        self.salt = salt
 
     def is_authenticated(self):
         """This property should return True if this is an anonymous user. (Actual users should return False instead.)"""
