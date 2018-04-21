@@ -5,6 +5,7 @@ from main import app, db
 from models import Member
 from crypto import hash_password, generate_salt
 import datetime
+from functions import app_login_user, app_create_user, app_delete_user_by_id
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -14,41 +15,22 @@ def index():
     email = request.values.get("mail")
     password = request.values.get("password")
     # Testing deleting from DB
-    delete = request.values.get("delete")
+    delete = request.values.get("delete", type=int)
     # Testing login
     login_mail = request.values.get("login_mail")
     login_password = request.values.get("login_password")
 
     if name and email and password:
-        # Create a new member
-        password_salt = generate_salt(16)
-        password_hash = hash_password(password, password_salt)
-        new_member = Member(name=name, email=email, password=password_hash, salt=password_salt)
-        # Add it to the database session
-        db.session.add(new_member)
-        # Commit the change to the DB
-        db.session.commit()
+        app_create_user(name=name, email=email, password=password)
 
     if delete:
-        memb = db.session.query(Member).get(delete)
-        db.session.delete(memb)
-        db.session.commit()
+        app_delete_user_by_id(delete)
 
     if login_mail and login_password:
-        some_user = db.session.query(Member).filter(Member.email == login_mail).first()
-        if not some_user:
-            print("User not found")
-        else:
-            hashed = hash_password(login_password, some_user.salt)
-            if hashed == some_user.password:
-                login_user(some_user)
-                print("Logged in user %s" % some_user.email)
-
-    # Get all members from the DB
-    members = Member.query.all()
+        app_login_user(login_mail=login_mail, login_password=login_password)
 
     # Render the template
-    return render_template("index.html", members=members, title="SpravujKlub")
+    return render_template("index.html", members=Member.query.all(), title="Spravuj Klub Index")
 
 
 @app.route('/races', methods=['GET'])
