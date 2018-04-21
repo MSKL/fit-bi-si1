@@ -1,11 +1,9 @@
 from flask import request, render_template, redirect
 from flask_login import login_required, login_user, logout_user, current_user
-
-from crypto import hash_password
 from functions import app_create_user, app_delete_user_by_id, app_login_user
-from entities.Race import Race
+from models.Race import Race
+from models.Member import Member
 from main import app, db, login_manager
-from models import Member
 import datetime
 
 
@@ -63,9 +61,9 @@ def race_edit():
     pass
 
 
-#@app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])
-#@login_required # TODO: Anybody can view any member's page ATM. NOT TESTED.
-#def profile(user_id):
+# @app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])
+# @login_required # TODO: Anybody can view any member's page ATM. NOT TESTED.
+# def profile(user_id):
 #    if request.method == 'GET':
 #        """return the information for <user_id>"""
 #    if request.method == 'POST':
@@ -91,21 +89,8 @@ def login():
             if login_mail and login_password:
                 if app_login_user(login_mail, login_password):
                     return redirect("/")
-                #user_to_login = db.session.query(Member).filter(Member.email == login_mail).first()
-                #if user_to_login:
-                #    hashed = hash_password(login_password, user_to_login.salt)
-                #    if hashed == user_to_login.password:
-                #        login_user(user_to_login)
-                #        return redirect("/")
 
     return render_template("login.html", title="Login")
-
-
-@app.route('/restricted')
-@login_required
-def restricted():
-    """just a test site to see if the auth works"""
-    return "User is now logged in. Others can't see this.!"
 
 
 @app.route('/logout')
