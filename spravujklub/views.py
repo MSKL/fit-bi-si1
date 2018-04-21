@@ -1,5 +1,5 @@
 from flask import request, render_template, redirect
-from flask_login import login_required, login_user
+from flask_login import login_required, login_user, logout_user
 from entities.Race import Race
 from main import app, db
 from models import Member
@@ -90,5 +90,5 @@ def restricted():
 @app.route('/logout')
 def logout():
     """Logs out the current user and then redirects to the index"""
-    flask_login.logout_user()
+    logout_user()
     return redirect("/")

@@ -24,9 +24,11 @@ from views import *
 @login_manager.user_loader
 def load_user(user_id):
     """should take the unicode ID of a user, and return the corresponding user object"""
-    # TODO: This does not work ATM. It should query the DB for an userid. It is used to preserve user login after shutdown.
-    # return Member.get(user_id)
-    return None
+    try:
+        id = int(user_id)
+        return db.session.query(Member).get(id).first()
+    except:
+        return None
 
 
 if __name__ == '__main__':
