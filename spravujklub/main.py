@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
@@ -15,20 +15,11 @@ db = SQLAlchemy(app)
 
 # Setup the login manager and init
 login_manager = LoginManager()
+login_manager.login_view = 'login'
 login_manager.init_app(app)
 
 # Import the render views after setting up the application
 from views import *
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    """should take the unicode ID of a user, and return the corresponding user object"""
-    try:
-        id = int(user_id)
-        return db.session.query(Member).get(id).first()
-    except:
-        return None
 
 
 if __name__ == '__main__':

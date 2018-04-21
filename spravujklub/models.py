@@ -1,5 +1,4 @@
 from main import db
-from crypto import generate_salt
 
 
 class Member(db.Model):

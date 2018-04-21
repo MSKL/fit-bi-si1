@@ -1,16 +1,24 @@
 from flask import request, render_template, redirect
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
+
+from crypto import hash_password
+from functions import app_create_user, app_delete_user_by_id
 from entities.Race import Race
-from main import app, db
+from main import app, db, login_manager
 from models import Member
-from crypto import hash_password, generate_salt
 import datetime
-from functions import app_login_user, app_create_user, app_delete_user_by_id
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """should take the unicode ID of a user, and return the corresponding user object"""
+    return db.session.query(Member).get(user_id)
 
 
 @app.route('/', methods=['GET', 'POST'])
-@login_required
 def index():
+    print(current_user.is_authenticated)
+
     # Testing adding to the DB
     name = request.values.get("name")
     email = request.values.get("mail")
@@ -19,18 +27,11 @@ def index():
     # Testing deleting from DB
     delete = request.values.get("delete", type=int)
 
-    # Testing login
-    login_mail = request.values.get("login_mail")
-    login_password = request.values.get("login_password")
-
     if name and email and password:
         app_create_user(name=name, email=email, password=password)
 
     if delete:
         app_delete_user_by_id(delete)
-
-    if login_mail and login_password:
-        app_login_user(login_mail=login_mail, login_password=login_password)
 
     # Render the template
     return render_template("index.html", members=Member.query.all(), title="Spravuj Klub Index")
@@ -61,17 +62,40 @@ def race_edit():
     pass
 
 
-@app.route('/profile', methods=['GET'])
-@login_required
-def profile():
-    # TODO: Make the user's profile page
-    return render_template("profile.html", user=Member("Lukas", "test@test.cz", "1234"))
+#@app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])
+#@login_required # TODO: Anybody can view any member's page ATM. NOT TESTED.
+#def profile(user_id):
+#    if request.method == 'GET':
+#        """return the information for <user_id>"""
+#    if request.method == 'POST':
+#        """modify/update the information for <user_id>"""
+#        data = request.form  # a multidict containing POST data
+#    if request.method == 'DELETE':
+#        """delete user with ID <user_id>"""
+#    else:
+#        # POST Error 405 Method Not Allowed
+#        pass
+#
+#    return "Not implemented yet."
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    # TODO: Make the login page
-    pass
+    if current_user.is_authenticated:
+        return redirect("/")
+    else:
+        if request.method == "POST":
+            login_mail = request.form.get("login_mail")
+            login_password = request.form.get("login_password")
+            if login_mail and login_password:
+                user_to_login = db.session.query(Member).filter(Member.email == login_mail).first()
+                if user_to_login:
+                    hashed = hash_password(login_password, user_to_login.salt)
+                    if hashed == user_to_login.password:
+                        login_user(user_to_login)
+                        return redirect("/")
+
+    return render_template("login.html", title="Login")
 
 
 @app.route('/restricted')
@@ -82,6 +106,7 @@ def restricted():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     """Logs out the current user and then redirects to the index"""
     logout_user()
