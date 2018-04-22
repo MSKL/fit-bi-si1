@@ -2,38 +2,44 @@
 
 {% block content %}
 
-    <div class="container-fluid tab-content">
+    <div class="container tab-content">
+        <div class="row">
 
-        <h1>Nadcházející závody</h1>
+            <h1>Nadcházející závody</h1>
 
-        <div class="table-responsive">
-            <table class="table table-bordered" id="mainTable">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Název</th>
-                    <th>Místo konání</th>
-                    <th>Datum</th>
-                    <th>Uživatel přihlášen</th>
-                    <th>Registrace</th>
-                </tr>
-                </thead>
-                <tbody id="displayArea">
-                {% for race in races %}
+            <div class="table-responsive">
+                <table class="table table-bordered" id="mainTable">
+                    <thead>
                     <tr>
-                        <td>{{ race.id }}</td>
-                        <td>{{ race.name }}</td>
-                        <td>{{ race.place }}</td>
-                        <td>{{ race.date }}</td>
-                        <td>{% if race.user_registered %} Registered
-							<td><button>Register</button></td>
-                        {% else %} Unregistered
-							<td><button>View</button></td>
-                        {% endif %}
+                        <th>ID</th>
+                        <th>Název</th>
+                        <th>Typ závodu</th>
+                        <th>Místo konání</th>
+                        <th>Datum konání</th>
+                        <th>Uzávěrka přihlášek</th>
+                        <th>Stav</th>
+                        <th>Podrobnosti</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody id="displayArea">
+                    {% for race in races %}
+                        <tr>
+                            <td>{{ race.id }}</td>
+                            <td>{{ race.name }}</td>
+                            <td>{{ race.type }}</td>
+                            <td>{{ race.place }}</td>
+                            <td>{{ race.date }}</td>
+                            <td>{{ race.deadline }}</td>
+                            <td>{% if race.user_registered %} Přihlášen
+                                {% else %} Nepřihlášen
+                                {% endif %}
+                            </td>
+                            <td><a href="/race_detail?id={{ race.id }}">ZDE</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -2,63 +2,68 @@
 
 {% block content %}
 
-    <div class="container-fluid tab-content">
-        <form action="/" role="form">
-            <h3>Přidat uživatele</h3>
-            <div class="form-group">
-                <label for="inputProduct">Jméno</label>
-                <input type="text" class="form-control" name="name" placeholder="Name">
-            </div>
-            <div class="form-group">
-                <label for="inputPrice">Email</label>
-                <input type="text" class="form-control" name="mail" placeholder="Email" >
-            </div>
-			<div class="form-group">
-                <label for="inputPrice">Heslo</label>
-                <input type="text" class="form-control" name="password" placeholder="Password" >
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-default">Add</button>
-            </div>
-        </form>
-
-        <form action="/" role="form">
-            <div class="form-group">
-                <label for="inputPrice">ID pro smazání</label>
-                <input type="text" class="form-control" name="delete" placeholder="ID" >
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-default">Delete</button>
-            </div>
-        </form>
-
-
-        <h3>Všichni členové v databázi</h3>
-
-        <div class="table-responsive">
-            <table class="table table-bordered" id="mainTable">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-					<th>Password hash</th>
-					<th>Password salt</th>
-                </tr>
-                </thead>
-                <tbody id="displayArea">
-                {% for member in members %}
-                    <tr>
-                        <td>{{ member.id }}</td>
-                        <td>{{ member.name }}</td>
-                        <td>{{ member.email }}</td>
-						<td>{{ member.password }}</td>
-						<td>{{ member.salt }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+    <div class="container tab-content">
+        <div class="row">
+            <form action="/" role="form">
+                <h3>Přidat uživatele</h3>
+                <div class="form-group">
+                    <label>Jméno</label>
+                    <input type="text" class="form-control" name="name" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="mail" placeholder="Email" >
+                </div>
+                <div class="form-group">
+                    <label for="inputPrice">Heslo</label>
+                    <input type="password" class="form-control" name="password" placeholder="Password" >
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default">Add</button>
+                </div>
+            </form>
         </div>
 
+        <div class="row">
+            <form action="/" role="form">
+                <div class="form-group">
+                    <label>ID pro smazání</label>
+                    <input type="number" class="form-control" name="delete" placeholder="ID" >
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default">Delete</button>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="row">
+            <h3>Všichni členové v databázi</h3>
+
+            <div class="table-responsive">
+                <table class="table table-bordered" id="mainTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Password hash</th>
+                        <th>Password salt</th>
+                    </tr>
+                    </thead>
+                    <tbody id="displayArea">
+                    {% for member in members %}
+                        <tr>
+                            <td>{{ member.id }}</td>
+                            <td>{{ member.name }}</td>
+                            <td>{{ member.email }}</td>
+                            <td>{{ member.password }}</td>
+                            <td>{{ member.salt }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}

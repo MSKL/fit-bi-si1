@@ -1,23 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container-fluid tab-content">
-
-		Testovací user má heslo mail "mail" a heslo "1234".
-		<form role="form" method="post">
-            <h3>Login</h3>
-            <div class="form-group">
-                <label for="inputPrice">Email</label>
-                <input type="text" class="form-control" name="login_mail" placeholder="Email" >
+    <div class="container tab-content">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                Testovací user má heslo mail "mail" a heslo "1234".
+                <form role="form" method="post">
+                    <h3>Login</h3>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" name="login_mail" placeholder="Email" >
+                    </div>
+                    <div class="form-group">
+                        <label>Heslo</label>
+                        <input type="password" class="form-control" name="login_password" placeholder="Password" >
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">Login</button>
+                    </div>
+                </form>
             </div>
-			<div class="form-group">
-                <label for="inputPrice">Heslo</label>
-                <input type="text" class="form-control" name="login_password" placeholder="Password" >
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-default">Login</button>
-            </div>
-        </form>
+            <div class="col-md-4"></div>
+        </div>
     </div>
 
 {% endblock %}

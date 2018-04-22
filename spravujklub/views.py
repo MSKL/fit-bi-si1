@@ -42,10 +42,10 @@ def index():
 @app.route('/races', methods=['GET'])
 @login_required
 def races():
-    races_query = [Race("Zavod1", "Zavodovice", datetime.date(2018, 1, 8), True),
-                   Race("Zavod2", "testtest", datetime.date(2018, 1, 8), False),
-                   Race("Zavod3", "Racetown", datetime.date(2018, 1, 8), False),
-                   Race("Zavod4", "Zavodnikov", datetime.date(2018, 1, 8), True)]
+    races_query = [Race("Zavod1", "pohar", "Zavodovice", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True),
+                   Race("Zavod2", "pohar", "testtest", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), False),
+                   Race("Zavod3","pohar", "Racetown", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), False),
+                   Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True)]
     # Render the template
     return render_template("races.html", races=races_query)
 
@@ -54,14 +54,15 @@ def races():
 @login_required
 def race_detail():
     # TODO: Make race detail page (not editable)
-    pass
+    # TODO: get id from url and query database for race
+    return render_template("race.html", race=Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True), userid=1)
 
 
 @app.route('/race_edit', methods=['GET'])
 @login_required
 def race_edit():
-    # TODO: Make race detail page (editable)
-    pass
+    # TODO: get id from url and query database for race
+    return render_template("race_edit.html", race=Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True), userid=1)
 
 
 @app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])
