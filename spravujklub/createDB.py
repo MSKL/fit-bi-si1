@@ -14,6 +14,6 @@ db.create_all()
 sqlite3 database/database.db
 sqlite> .tables
 member
-sqlite> insert into member values (0, "Čenda", "cenda@cendovajeskyne.cz");
+sqlite> insert into member values (0, "Cenda", "cenda@cendovajeskyne.cz");
 sqlite> .exit
 """

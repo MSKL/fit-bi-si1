@@ -6,9 +6,10 @@ class Member(db.Model):
     __tablename__ = "members"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50))
-    email = db.Column(db.String(50))
+    email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(50))
     salt = db.Column(db.String(16))
+    type = None     # TODO
 
     def __init__(self, name, email, password, salt):
         self.name = name
@@ -27,6 +28,7 @@ class Member(db.Model):
         pass
 
     def is_anonymous(self):
+        """Returns true if the user is anonymous."""
         pass
 
     def get_id(self):

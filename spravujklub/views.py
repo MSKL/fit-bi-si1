@@ -11,7 +11,7 @@ import datetime
 def load_user(user_id):
     """
     Should take the unicode ID of a user, and return the corresponding user object.
-    This function if required by the flask_login
+    This function if required by the flask_login. Should not be removed.
     """
     return db.session.query(Member).get(user_id)
 
@@ -42,6 +42,12 @@ def index():
 @app.route('/races', methods=['GET'])
 @login_required
 def races():
+    races_query2 \
+        = [Race(name="Zavod1", date=datetime.date(2018, 1, 8),created_by_user=0 , deadline=datetime.date(2018, 1, 7)),
+           Race(name="Zavod2", date=datetime.date(2018, 1, 8),created_by_user=0 , deadline=datetime.date(2018, 1, 7)),
+           Race(name="Zavod3", date=datetime.date(2018, 1, 8),created_by_user=0 , deadline=datetime.date(2018, 1, 7)),
+           Race(name="Zavod4", date=datetime.date(2018, 1, 8),created_by_user=0 , deadline=datetime.date(2018, 1, 7))]
+
     races_query = [Race("Zavod1", "pohar", "Zavodovice", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True),
                    Race("Zavod2", "pohar", "testtest", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), False),
                    Race("Zavod3","pohar", "Racetown", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), False),
@@ -50,17 +56,17 @@ def races():
     return render_template("races.html", races=races_query)
 
 
-@app.route('/race_detail', methods=['GET'])
+@app.route('/race_detail/<race_id>', methods=['GET'])
 @login_required
-def race_detail():
+def race_detail(race_id):
     # TODO: Make race detail page (not editable)
     # TODO: get id from url and query database for race
     return render_template("race.html", race=Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True), userid=1)
 
 
-@app.route('/race_edit', methods=['GET'])
+@app.route('/race_edit/<race_id>', methods=['GET'])
 @login_required
-def race_edit():
+def race_edit(race_id):
     # TODO: get id from url and query database for race
     return render_template("race_edit.html", race=Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True), userid=1)
 
@@ -87,6 +93,7 @@ def profile(user_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Checks if the user if authotized. If not, redirects him to a login screen."""
     if current_user.is_authenticated:
         return redirect("/")
     else:
