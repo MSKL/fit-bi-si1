@@ -1,7 +1,7 @@
 from flask_login import login_user
 from main import db
-from models.Member import Member
-from crypto import generate_salt, hash_password
+from dl.models.Member import Member
+from bl.crypto import generate_salt, hash_password
 
 
 def app_login_user(login_mail, login_password):

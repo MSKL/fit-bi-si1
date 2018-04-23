@@ -8,7 +8,7 @@ app = Flask("__name__")
 Bootstrap(app)
 
 # Setup the config from file
-app.config.from_pyfile("config_app.py")
+app.config.from_pyfile("config/config_app.py")
 
 # Setup the DB (the comment below is a hack for Pycharm autocomplete)
 db = SQLAlchemy(app)
@@ -19,9 +19,9 @@ login_manager.login_view = 'login'
 login_manager.init_app(app)
 
 # Import the render views after setting up the application
-from views import *
+from bl.views import *
 
 
 if __name__ == '__main__':
-    from config_host import host, port
+    from config.config_host import host, port
     app.run(host=host, port=port)

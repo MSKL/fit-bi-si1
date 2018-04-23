@@ -1,8 +1,8 @@
 from flask import request, render_template, redirect
-from flask_login import login_required, login_user, logout_user, current_user
-from functions import app_create_user, app_delete_user_by_id, app_login_user
-from models.Race import Race
-from models.Member import Member
+from flask_login import login_required, logout_user, current_user
+from bl.functions import app_create_user, app_delete_user_by_id, app_login_user
+from dl.models.Race import Race
+from dl.models.Member import Member
 from main import app, db, login_manager
 import datetime
 
