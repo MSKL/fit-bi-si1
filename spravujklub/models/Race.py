@@ -33,3 +33,7 @@ class Race(db.Model):
         self.disciplines = disciplines
         self.url = url
         self.info = info
+        self.user_registered = False
+
+    def set_user_registered(self, val):
+        self.user_registered = val

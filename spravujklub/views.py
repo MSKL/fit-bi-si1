@@ -42,18 +42,13 @@ def admin_panel():
 @app.route('/', methods=['GET'])
 @login_required
 def index():
-    races_query2 = \
-        [Race(name="Zavod1", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
+    races_query2 = [Race(name="Zavod1", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
          Race(name="Zavod2", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
          Race(name="Zavod3", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
          Race(name="Zavod4", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7))]
 
-    races_query = [Race("Zavod1", "pohar", "Zavodovice", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True),
-                   Race("Zavod2", "pohar", "testtest", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), False),
-                   Race("Zavod3","pohar", "Racetown", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), False),
-                   Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True)]
     # Render the template
-    return render_template("races.html", races=races_query, title="Races")
+    return render_template("races.html", races=races_query2, title="Races")
 
 
 @app.route('/race_detail/<race_id>', methods=['GET'])
@@ -61,14 +56,26 @@ def index():
 def race_detail(race_id):
     # TODO: Make race detail page (not editable)
     # TODO: get id from url and query database for race
-    return render_template("race_detail.html", race=Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True), userid=1)
+    testRace =  Race(name="Zavod4",
+                     type="pohar",
+                     place="Zavodnikov",
+                     date=datetime.date(2018, 1, 8),
+                     deadline=datetime.date(2018, 1, 7),
+                     ).set_user_registered(True)
+    return render_template("race_detail.html", race=testRace, userid=1)
 
 
 @app.route('/race_edit/<race_id>', methods=['GET'])
 @login_required
 def race_edit(race_id):
     # TODO: get id from url and query database for race
-    return render_template("race_edit.html", race=Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True), userid=1)
+    testRace = Race(name="Zavod4",
+                    type="pohar",
+                    place="Zavodnikov",
+                    date=datetime.date(2018, 1, 8),
+                    deadline=datetime.date(2018, 1, 7),
+                    ).set_user_registered(True)
+    return render_template("race_edit.html", race=testRace, userid=1)
 
 
 @app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])
