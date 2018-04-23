@@ -19,6 +19,3 @@ class Race(db.Model):
         self.created_by_user_id = created_by_user
         self.info = info
 
-    def set_user_registered(self, val):
-        # todo
-        pass

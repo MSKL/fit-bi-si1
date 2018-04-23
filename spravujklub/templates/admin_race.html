@@ -12,7 +12,7 @@
 
     <div class="container tab-content">
         <div class="row">
-            <form action="/" role="form">
+            <form action="/admin_race" role="form">
                 <h3>Přidat závod</h3>
                 <div class="form-group">
                     <label>Jméno</label>
@@ -20,15 +20,11 @@
                 </div>
                 <div class="form-group">
                     <label>Datum</label>
-                    <input type="date" class="form-control" name="date" placeholder="Date" >
+                    <input type="datetime-local" class="form-control" name="date" placeholder="Date" >
                 </div>
                 <div class="form-group">
                     <label>Deadline přihlášek</label>
-                    <input type="date" class="form-control" name="deadline" placeholder="Deadline" >
-                </div>
-				<div class="form-group">
-                    <label>Vytvořil uživatel ID</label>
-                    <input type="number" class="form-control" name="created_by_user_id" placeholder="CreatedByUserID" >
+                    <input type="datetime-local" class="form-control" name="deadline" placeholder="Deadline" >
                 </div>
 				<div class="form-group">
                     <label>Info</label>
@@ -39,7 +35,7 @@
                 </div>
             </form>
         </div>
-
+		<!--
         <div class="row">
             <form action="/" role="form">
                 <div class="form-group">
@@ -50,6 +46,36 @@
                     <button type="submit" class="btn btn-default">Delete</button>
                 </div>
             </form>
+        </div>
+		-->
+		<div class="row">
+            <h3>Všechny závody v databázi</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="mainTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Deadline</th>
+                        <th>Created by user ID</th>
+                        <th>Info</th>
+                    </tr>
+                    </thead>
+                    <tbody id="displayArea">
+                    {% for race in races %}
+                        <tr>
+                            <td>{{ race.id }}</td>
+                            <td>{{ race.name }}</td>
+                            <td>{{ race.date }}</td>
+                            <td>{{ race.deadline }}</td>
+                            <td>{{ race.created_by_user_id }}</td>
+                            <td>{{ race.info }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
