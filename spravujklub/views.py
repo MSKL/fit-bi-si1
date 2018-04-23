@@ -16,9 +16,9 @@ def load_user(user_id):
     return db.session.query(Member).get(user_id)
 
 
-@app.route('/', methods=['GET', 'POST'])
-@login_required
-def index():
+@app.route('/admin_panel', methods=['GET', 'POST'])
+#@login_required
+def admin_panel():
     print(current_user.is_authenticated)
 
     # Testing adding to the DB
@@ -36,24 +36,24 @@ def index():
         app_delete_user_by_id(delete)
 
     # Render the template
-    return render_template("index.html", members=Member.query.all(), title="Spravuj Klub Index")
+    return render_template("index.html", members=Member.query.all(), title="Admin panel")
 
 
-@app.route('/races', methods=['GET'])
+@app.route('/', methods=['GET'])
 @login_required
-def races():
-    races_query2 \
-        = [Race(name="Zavod1", date=datetime.date(2018, 1, 8),created_by_user=0 , deadline=datetime.date(2018, 1, 7)),
-           Race(name="Zavod2", date=datetime.date(2018, 1, 8),created_by_user=0 , deadline=datetime.date(2018, 1, 7)),
-           Race(name="Zavod3", date=datetime.date(2018, 1, 8),created_by_user=0 , deadline=datetime.date(2018, 1, 7)),
-           Race(name="Zavod4", date=datetime.date(2018, 1, 8),created_by_user=0 , deadline=datetime.date(2018, 1, 7))]
+def index():
+    races_query2 = \
+        [Race(name="Zavod1", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
+         Race(name="Zavod2", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
+         Race(name="Zavod3", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
+         Race(name="Zavod4", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7))]
 
     races_query = [Race("Zavod1", "pohar", "Zavodovice", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True),
                    Race("Zavod2", "pohar", "testtest", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), False),
                    Race("Zavod3","pohar", "Racetown", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), False),
                    Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True)]
     # Render the template
-    return render_template("races.html", races=races_query)
+    return render_template("races.html", races=races_query, title="Races")
 
 
 @app.route('/race_detail/<race_id>', methods=['GET'])
@@ -61,7 +61,7 @@ def races():
 def race_detail(race_id):
     # TODO: Make race detail page (not editable)
     # TODO: get id from url and query database for race
-    return render_template("race.html", race=Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True), userid=1)
+    return render_template("race_detail.html", race=Race("Zavod4", "pohar", "Zavodnikov", datetime.date(2018, 1, 8), datetime.date(2018, 1, 7), True), userid=1)
 
 
 @app.route('/race_edit/<race_id>', methods=['GET'])
