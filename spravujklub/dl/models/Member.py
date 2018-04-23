@@ -9,13 +9,14 @@ class Member(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(50))
     salt = db.Column(db.String(16))
-    type = None     # TODO
+    # is_admin = db.Column(db.Boolean())
 
-    def __init__(self, name, email, password, salt):
+    def __init__(self, name, email, password, salt, is_admin = False):
         self.name = name
         self.email = email
         self.password = password
         self.salt = salt
+        self.is_admin = is_admin
 
     def is_authenticated(self):
         """This property should return True if this is an anonymous user. (Actual users should return False instead.)"""

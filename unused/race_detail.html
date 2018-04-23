@@ -8,20 +8,48 @@
             <h3>Informace</h3>
             <div class="table-responsive">
                 <table class="table" id="infoTable">
-					<tr>
-                        <td>Vytvořil:</td>
-                        <td>{{ race.created_by_user_id }}</td>
+                    <tr>
+                        <td class="col-3">Typ závodu:</td>
+                        <td>{{ race.type }}</td>
                     </tr>
                     <tr>
                         <td>Datum:</td>
                         <td>{{ race.date }}</td>
                     </tr>
                     <tr>
-                        <td>Informace:</td>
+                        <td>Start:</td>
+                        <td>{{ race.start }}</td>
+                    </tr>
+                    <tr>
+                        <td>Prezentace do:</td>
+                        <td>{{ race.end_registration }}</td>
+                    </tr>
+                    <tr>
+                        <td>Pořadatel:</td>
+                        <td>{{ race.organizer }}</td>
+                    </tr>
+                    <tr>
+                        <td>Disciplína:</td>
+                        <td>{{ race.discipline }}</td>
+                    </tr>
+                    <tr>
+                        <td>Web:</td>
+                        <td><a href="{{ race.url }}">{{ race.url }}</a></td>
+                    </tr>
+                    <tr>
+                        <td>Další info:</td>
                         <td>{{ race.info }}</td>
                     </tr>
                 </table>
             </div>
+        </div>
+
+        <div class="row">
+            <h3>Kategorie</h3>
+            <div>
+                <td>{{ race.categories }}</td>
+            </div>
+
         </div>
 
         <div class="row">

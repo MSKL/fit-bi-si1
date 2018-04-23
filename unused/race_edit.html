@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container tab-content">
+        <div class="row">
+            <h1>{{ race.name }}</h1>
+            <h3>Informace</h3>
+            <div class="table-responsive">
+                <table class="table" id="infoTable">
+                    <tr>
+                        <td class="col-3">Typ závodu:</td>
+                        <td><input class="form-control" name="deadline" value="{{ race.type }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Datum:</td>
+                        <td><input class="form-control" name="deadline" value="{{ race.date }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Start:</td>
+                        <td><input class="form-control" name="start" value="{{ race.start }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Prezentace do:</td>
+                        <td><input class="form-control" name="end_registration" value="{{ race.end_registration }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Pořadatel:</td>
+                        <td><input class="form-control" name="organizer" value="{{ race.organizer }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Disciplína:</td>
+                        <td><input class="form-control" name="discipline" value="{{ race.discipline }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Web:</td>
+                        <td><input class="form-control" name="url" value="{{ race.url }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Další info:</td>
+                        <td><input class="form-control" name="info" value="{{ race.info }}"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>Kategorie</h3>
+            <div>
+                <td><input class="form-control" name="categories" value="{{ race.categories }}"></td>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <h3>Přihlásit</h3>
+            <div class="table-responsive">
+                <table class="table" id="infoTable">
+                    <tr>
+                        <td class="col-3">Uzávěrka přihlášek:</td>
+                        <td><input class="form-control" name="deadline" value="{{ race.deadline }}"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

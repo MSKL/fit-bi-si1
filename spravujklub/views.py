@@ -19,8 +19,6 @@ def load_user(user_id):
 @app.route('/admin_panel', methods=['GET', 'POST'])
 #@login_required
 def admin_panel():
-    print(current_user.is_authenticated)
-
     # Testing adding to the DB
     name = request.values.get("name")
     email = request.values.get("mail")
@@ -36,13 +34,37 @@ def admin_panel():
         app_delete_user_by_id(delete)
 
     # Render the template
-    return render_template("index.html", members=Member.query.all(), title="Admin panel")
+    return render_template("member_admin.html", members=Member.query.all(), title="Admin panel")
+
+
+@app.route('/race_admin', methods=['GET'])
+#@login_required
+def race_admin():
+
+    # Testing adding to the DB
+    name = request.values.get("name")
+    date = request.values.get("date", type=datetime)
+    deadline = request.values.get("deadline", type=datetime)
+    created_by_user_id = request.values.get("created_by_user_id", type=int)
+    info = request.values.get("info")
+
+    if name and date and deadline and created_by_user_id and info:
+        new_race = Race(name, date, deadline, created_by_user_id, info)
+        db.session.add(new_race)
+        db.session.commit()
+
+
+    # Render the template
+    return render_template("race_admin.html", members=Member.query.all(), title="Admin panel")
 
 
 @app.route('/', methods=['GET'])
 @login_required
 def index():
-    races_query2 = [Race(name="Zavod1", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
+    # races_from_db = Race.query.all()
+
+    races_query2 = \
+        [Race(name="Zavod1", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
          Race(name="Zavod2", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
          Race(name="Zavod3", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
          Race(name="Zavod4", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7))]
@@ -56,12 +78,9 @@ def index():
 def race_detail(race_id):
     # TODO: Make race detail page (not editable)
     # TODO: get id from url and query database for race
-    testRace =  Race(name="Zavod4",
-                     type="pohar",
-                     place="Zavodnikov",
-                     date=datetime.date(2018, 1, 8),
-                     deadline=datetime.date(2018, 1, 7),
-                     ).set_user_registered(True)
+    testRace = \
+        Race(name="Zavod1", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7))
+
     return render_template("race_detail.html", race=testRace, userid=1)
 
 
@@ -69,11 +88,7 @@ def race_detail(race_id):
 @login_required
 def race_edit(race_id):
     # TODO: get id from url and query database for race
-    testRace = Race(name="Zavod4",
-                    type="pohar",
-                    place="Zavodnikov",
-                    date=datetime.date(2018, 1, 8),
-                    deadline=datetime.date(2018, 1, 7),
+    testRace = Race(name="Zavod4", type="pohar", place="Zavodnikov", date=datetime.date(2018, 1, 8),deadline=datetime.date(2018, 1, 7),
                     ).set_user_registered(True)
     return render_template("race_edit.html", race=testRace, userid=1)
 
@@ -87,13 +102,8 @@ def profile(user_id):
         """return the information for <user_id>"""
     if request.method == 'POST':
         """modify/update the information for <user_id>"""
-        # a multidict containing POST data
-        data = request.form
     if request.method == 'DELETE':
         """delete user with ID <user_id>"""
-    else:
-        # POST Error 405 Method Not Allowed
-        pass
 
     return "Not implemented yet."
 

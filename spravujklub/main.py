@@ -19,7 +19,7 @@ login_manager.login_view = 'login'
 login_manager.init_app(app)
 
 # Import the render views after setting up the application
-from bl.views import *
+from views import *
 
 
 if __name__ == '__main__':

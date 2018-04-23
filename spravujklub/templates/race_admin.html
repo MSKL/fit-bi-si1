@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<!---
+	name = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    deadline = db.Column(db.DateTime, nullable=False)
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('members.id'), nullable=True)
+    info = db.Column(db.Text)
+	--->
+
+    <div class="container tab-content">
+        <div class="row">
+            <form action="/" role="form">
+                <h3>Přidat závod</h3>
+                <div class="form-group">
+                    <label>Jméno</label>
+                    <input type="text" class="form-control" name="name" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label>Datum</label>
+                    <input type="date" class="form-control" name="date" placeholder="Date" >
+                </div>
+                <div class="form-group">
+                    <label>Deadline přihlášek</label>
+                    <input type="date" class="form-control" name="deadline" placeholder="Deadline" >
+                </div>
+				<div class="form-group">
+                    <label>Vytvořil uživatel ID</label>
+                    <input type="number" class="form-control" name="created_by_user_id" placeholder="CreatedByUserID" >
+                </div>
+				<div class="form-group">
+                    <label>Info</label>
+                    <input type="text" class="form-control" name="info" placeholder="Info" >
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default">Add</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="row">
+            <form action="/" role="form">
+                <div class="form-group">
+                    <label>ID pro smazání</label>
+                    <input type="number" class="form-control" name="delete" placeholder="ID" >
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default">Delete</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}
