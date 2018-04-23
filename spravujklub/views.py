@@ -1,8 +1,7 @@
 from flask import request, render_template, redirect
 from flask_login import login_required, logout_user, current_user, login_user
-
 from bl.crypto import hash_password
-from bl.functions import app_create_user, app_delete_user_by_id, app_login_user
+from bl.functions import app_create_user, app_delete_user_by_id
 from dl.models.Race import Race
 from dl.models.Member import Member
 from main import app, db, login_manager
@@ -48,19 +47,12 @@ def logout():
 @app.route('/', methods=['GET'])
 @login_required
 def index():
-    # races_from_db = Race.query.all()
+    races_from_db = Race.query.all()
 
-    races_query2 = \
-        [Race(name="Zavod1", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
-         Race(name="Zavod2", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
-         Race(name="Zavod3", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7)),
-         Race(name="Zavod4", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7))]
-
-    # Render the template
-    return render_template("races.html", races=races_query2, title="Races")
+    return render_template("races.html", races=races_from_db, title="Nadcházející závody")
 
 
-@app.route('/admin_member', methods=['GET', 'POST'])
+@app.route('/admin_member', methods=['GET'])
 def admin_member():
     # Testing adding to the DB
     name = request.values.get("name")
@@ -81,6 +73,7 @@ def admin_member():
 
 
 @app.route('/admin_race', methods=['GET'])
+@login_required
 def admin_race():
 
     # Testing adding to the DB
@@ -107,21 +100,60 @@ def admin_race():
 @app.route('/race_detail/<race_id>', methods=['GET'])
 @login_required
 def race_detail(race_id):
-    # TODO: Make race detail page (not editable)
-    # TODO: get id from url and query database for race
-    testRace = \
-        Race(name="Zavod1", date=datetime.date(2018, 1, 8), created_by_user=0, deadline=datetime.date(2018, 1, 7))
+    race = Race.query.get(race_id)
+    member_signup = None
+    member_signoff = None
 
-    return render_template("race_detail.html", race=testRace, userid=1)
+    # TODO: Add logic to check if the current user is admin so he can add another users
+    if request.method == "GET":
+        member_signup = request.values.get("member_signup")
+        member_signoff = request.values.get("member_signoff")
+
+        if member_signup is not None:
+            member_signup = int(member_signup)
+            member_to_signup = Member.query.get(member_signup)
+            race.members.append(member_to_signup)
+            db.session.commit()
+
+        if member_signoff is not None:
+            member_signoff = int(member_signoff)
+            member_to_signoff = Member.query.get(member_signoff)
+            race.members.remove(member_to_signoff)
+            db.session.commit()
+
+    return render_template("race_detail.html", race=race)
 
 
 @app.route('/race_edit/<race_id>', methods=['GET'])
 @login_required
 def race_edit(race_id):
-    # TODO: get id from url and query database for race
-    testRace = Race(name="Zavod4", type="pohar", place="Zavodnikov", date=datetime.date(2018, 1, 8),
-                    deadline=datetime.date(2018, 1, 7))
-    return render_template("race_edit.html", race=testRace, userid=1)
+    race = Race.query.get(race_id)
+
+    if request.method == "GET":
+        name = request.values.get("name")
+        date = request.values.get("date")
+        deadline = request.values.get("deadline")
+        info = request.values.get("info")
+
+        if name is not None and date is not None and deadline is not None and info is not None:
+            print(name, date, deadline, info)
+
+            # Convert the parameters
+            date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+            deadline = datetime.strptime(deadline, '%Y-%m-%d %H:%M:%S')
+
+            # Update the values
+            race.name = name
+            race.date = date
+            race.deadline = deadline
+            race.info = info
+
+            # Commit the session
+            db.session.commit()
+
+            return redirect("/race_detail/%s" % str(race_id))
+
+    return render_template("race_edit.html", race=race)
 
 
 @app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])

@@ -2,49 +2,77 @@
 
 {% block content %}
 
-    <div class="container tab-content">
-        <div class="row">
-            <h1>{{ race.name }}</h1>
-            <h3>Informace</h3>
-            <div class="table-responsive">
-                <table class="table" id="infoTable">
+	<div class="container tab-content">
+		<div class="row">
+			<h1>{{ race.name }}</h1>
+			<h3>Informace</h3>
+			<div class="table-responsive">
+				<table class="table" id="infoTable">
 					<tr>
-                        <td>Vytvořil:</td>
-                        <td>{{ race.created_by_user_id }}</td>
-                    </tr>
-                    <tr>
-                        <td>Datum:</td>
-                        <td>{{ race.date }}</td>
-                    </tr>
-                    <tr>
-                        <td>Informace:</td>
-                        <td>{{ race.info }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+						<td>Vytvořil uživatel:</td>
+						<td>{{ race.created_by.name }}</td>
+					</tr>
+					<tr>
+						<td>Datum a čas konání:</td>
+						<td>{{ race.date }}</td>
+					</tr>
+					<tr>
+						<td>Uzávěrka přihlášek:</td>
+						<td>{{ race.deadline }}</td>
+					</tr>
+					<tr>
+						<td>Informace:</td>
+						<td>{{ race.info }}</td>
+					</tr>
+					<tr>
+						<td>Administrace:</td>
+					<td>
+						<button type="submit" class="btn btn-default" onclick="location.href='/race_edit/{{ race.id }}'">Upravit</button>
+						<button type="submit" class="btn btn-default" disabled>Odstranit</button>
+					</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 
-        <div class="row">
-            <h3>Přihlásit</h3>
-            <div class="table-responsive">
-                <table class="table" id="infoTable">
-                    <tr>
-                        <td class="col-3">Uzávěrka přihlášek:</td>
-                        <td>{{ race.deadline }}</td>
-                    </tr>
-                </table>
-
-            </div>
-        </div>
-
-        <div class="row">
-            <form class="col-md-4 col-md-offset-4" action="/" role="form">
-                <input class="invisible" type="text" name="user_id" value="{{ uid }}">
-                <div class="container-fluid">
-                    <button type="submit" class="btn btn-default">Přihlásit se</button>
-                </div>
-            </form>
-        </div>
-    </div>
+		<div class="row">
+			<h3>Uživatelé jedoucí na závod</h3>
+			<div>
+				<table class="table" id="infoTable">
+					<tr>
+						{% for member in race.members %}
+							<td>{{ member.name }}</td>
+						{% endfor %}
+					</tr>
+				</table>
+			</div>
+			<table class="table" id="infoTable">
+				<tr>
+					<td>
+						<form class="col-md-4 col-md-offset-4" action="{{ race.id }}" role="form">
+							<input class="invisible" type="text" name="member_signup" value="{{ current_user.id }}">
+							<div class="container-fluid">
+								<button type="submit" class="btn btn-default" {% if current_user in race.members %}
+										disabled {% endif %}>
+									Přihlásit se
+								</button>
+							</div>
+						</form>
+					</td>
+					<td>
+						<form class="col-md-4 col-md-offset-4" action="{{ race.id }}" role="form">
+							<input class="invisible" type="text" name="member_signoff" value="{{ current_user.id }}">
+							<div class="container-fluid">
+								<button type="submit" class="btn btn-default" {% if not current_user in race.members %}
+										disabled {% endif %}>
+									Odhlásit se
+								</button>
+							</div>
+						</form>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
 
 {% endblock %}

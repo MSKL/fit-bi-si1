@@ -13,8 +13,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Název</th>
-                        <th>Typ závodu</th>
-                        <th>Místo konání</th>
                         <th>Datum konání</th>
                         <th>Uzávěrka přihlášek</th>
                         <th>Stav</th>
@@ -26,12 +24,13 @@
                         <tr>
                             <td>{{ race.id }}</td>
                             <td>{{ race.name }}</td>
-                            <td>{{ race.type }}</td>
-                            <td>{{ race.place }}</td>
                             <td>{{ race.date }}</td>
                             <td>{{ race.deadline }}</td>
-                            <td>{% if race.user_registered %} Přihlášen
-                                {% else %} Nepřihlášen
+                            <td>
+								{% if current_user in race.members %}
+									Přihlášen
+                                {% else %}
+									Nepřihlášen
                                 {% endif %}
                             </td>
                             <td><a href="/race_detail/{{ race.id }}">ZDE</a></td>
