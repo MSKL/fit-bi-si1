@@ -1,4 +1,4 @@
-from main import db
+from database import db
 
 # many to many relationship between race and a member
 tags = db.Table('ucast_na_zavode',

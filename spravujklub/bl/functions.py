@@ -1,5 +1,5 @@
 from flask_login import login_user
-from main import db
+from database import db
 from dl.models.Member import Member
 from bl.crypto import generate_salt, hash_password
 

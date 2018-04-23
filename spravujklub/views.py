@@ -4,16 +4,9 @@ from bl.crypto import hash_password
 from bl.functions import app_create_user, app_delete_user_by_id
 from dl.models.Race import Race
 from dl.models.Member import Member
-from main import app, db, login_manager
+from main import app, login_manager
+from database import db
 from datetime import datetime
-
-@login_manager.user_loader
-def load_user(user_id):
-    """
-    Should take the unicode ID of a user, and return the corresponding user object.
-    This function if required by the flask_login. Should not be removed.
-    """
-    return db.session.query(Member).get(user_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])
