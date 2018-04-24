@@ -40,9 +40,11 @@
 			<div>
 				<table class="table" id="infoTable">
 					<tr>
-						{% for member in race.members %}
-							<td>{{ member.name }}</td>
-						{% endfor %}
+						<td>
+							{% for member in race.members %}
+								{{ member.name }} {{ "," if not loop.last }}
+							{% endfor %}
+						</td>
 					</tr>
 				</table>
 			</div>
