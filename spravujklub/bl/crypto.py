@@ -1,17 +1,24 @@
 import hashlib
 import random
 
-ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+class Crypto:
+    @staticmethod
+    def hash_password(passw, salt):
+        """ Takes in an username and salt and returns a hash
+        :param passw: string
+        :param salt: string
+        :return: hash - 64 digits
+        """
+        return hashlib.sha256(str(passw).encode('utf-8') + str(salt).encode('utf-8')).hexdigest()
 
-def hash_password(username, salt):
-    """ Takes in an username and salt and returns a hash
-    :param username: string
-    :param salt: string
-    :return: hash - 64 digits
-    """
-    return hashlib.sha256(str(username).encode('utf-8') + str(salt).encode('utf-8')).hexdigest()
+    @staticmethod
+    def _generate_salt(length):
+        alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        return ''.join(random.choice(alphabet) for i in range(length))
 
-
-def generate_salt(len):
-    return ''.join(random.choice(ALPHABET) for i in range(len))
+    @staticmethod
+    def generate_password_salt(passw):
+        salt = Crypto._generate_salt(16)
+        hashed = Crypto.hash_password(passw, salt)
+        return hashed, salt

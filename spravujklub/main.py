@@ -1,16 +1,16 @@
 from flask import Flask
-from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
-from dl.MemberController import MemberController
+from flask_bootstrap import Bootstrap
 
-# The flask application
+from dl.MemberController import MemberController
 from dl.RaceController import RaceController
 
+# The flask application
 app = Flask("__name__")
 Bootstrap(app)
 
 # Setup the config from file
-app.config.from_pyfile("config/config_app.py")
+app.config.from_pyfile("config/config_sqlalchemy.py")
 
 # Setup the login manager and init
 login_manager = LoginManager()
@@ -35,11 +35,11 @@ def load_user(user_id):
 if __name__ == '__main__':
     # Import the render views after setting up the application
     from views import *
-    from config import config_host
+    from config import config_server
     from database import db
 
     # Register the app in the database
     db.init_app(app)
 
     # Run the application
-    app.run(host=config_host.host, port=config_host.port)
+    app.run(host=config_server.host, port=config_server.port)

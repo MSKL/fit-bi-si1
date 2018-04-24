@@ -1,4 +1,4 @@
-from bl.crypto import generate_salt, hash_password
+from bl.crypto import Crypto
 from dl.IMemberController import IMemberController
 from dl.models.Member import Member
 from flask_login import login_user, logout_user
@@ -24,8 +24,7 @@ class MemberController(IMemberController):
 
     def create_member(self, name, mail, password):
         # Generate a salt and hash the password
-        password_salt = generate_salt(16)
-        password_hash = hash_password(password, password_salt)
+        password_hash, password_salt = Crypto.generate_password_salt(password)
 
         # Create a new member
         new_member = Member(name=name, email=mail, password=password_hash, salt=password_salt)
@@ -37,7 +36,7 @@ class MemberController(IMemberController):
     def login_member(self, login_mail, login_password):
         user_to_login = self.db.session.query(Member).filter(Member.email == login_mail).first()
         if user_to_login:
-            hashed = hash_password(login_password, user_to_login.salt)
+            hashed = Crypto.hash_password(login_password, user_to_login.salt)
             if hashed == user_to_login.password:
                 login_user(user_to_login)
                 return

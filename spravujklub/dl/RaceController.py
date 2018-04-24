@@ -5,6 +5,7 @@ from dl.models.Race import Race
 
 class RaceController(IRaceController):
 
+
     def __init__(self, db):
         self.db = db
 
@@ -24,3 +25,6 @@ class RaceController(IRaceController):
         # Commit the session
         self.db.session.add(new_race)
         self.db.session.commit()
+
+    def delete_race(self, race):
+        pass
