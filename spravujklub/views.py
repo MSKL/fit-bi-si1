@@ -1,30 +1,27 @@
 from flask import request, render_template, redirect
-from flask_login import login_required, logout_user, current_user, login_user
-from bl.crypto import hash_password
-from bl.functions import app_create_user, app_delete_user_by_id
+from flask_login import login_required, current_user
 from dl.models.Race import Race
-from dl.models.Member import Member
-from main import app, login_manager
+from main import app, member_controller, race_controller
 from database import db
 from datetime import datetime
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Checks if the user if authotized. If not, redirects him to a login screen."""
+    """Logs the user into the website"""
+
+    # Checks if the user if authotized. If not, redirects him to a login screen.
     if current_user.is_authenticated:
         return redirect("/")
     else:
-        if request.method == "POST":
-            login_mail = request.form.get("login_mail")
-            login_password = request.form.get("login_password")
-            if login_mail and login_password:
-                user_to_login = db.session.query(Member).filter(Member.email == login_mail).first()
-                if user_to_login:
-                    hashed = hash_password(login_password, user_to_login.salt)
-                    if hashed == user_to_login.password:
-                        login_user(user_to_login)
-                        return redirect("/")
+        login_mail = request.form.get("login_mail")
+        login_password = request.form.get("login_password")
+        if login_mail is not None and login_password is not None:
+            try:
+                member_controller.login_member(login_mail, login_password)
+                return redirect("/")
+            except Exception as ex:
+                print(ex)
 
     return render_template("login.html", title="Login")
 
@@ -33,41 +30,52 @@ def login():
 @login_required
 def logout():
     """Logs out the current user and then redirects to the index"""
-    logout_user()
+    try:
+        member_controller.logout_member()
+    except Exception as ex:
+        print(str(ex))
+
     return redirect("/")
 
 
 @app.route('/', methods=['GET'])
 @login_required
 def index():
+    """Index shows the upcoming races"""
     races_from_db = Race.query.all()
-
     return render_template("races.html", races=races_from_db, title="Nadcházející závody")
 
 
 @app.route('/admin_member', methods=['GET'])
 def admin_member():
-    # Testing adding to the DB
+    """Admin panel to manage members"""
     name = request.values.get("name")
     email = request.values.get("mail")
     password = request.values.get("password")
+    delete_id = request.values.get("delete")
 
-    # Testing deleting from DB
-    delete = request.values.get("delete", type=int)
+    if name is not None and email is not None:
+        try:
+            member_controller.create_member(name=name, mail=email, password=password)
+        except Exception as ex:
+            print(str(ex))
 
-    if name and email and password:
-        app_create_user(name=name, email=email, password=password)
-
-    if delete:
-        app_delete_user_by_id(delete)
+    if delete_id is not None:
+        try:
+            delete_id = int(delete_id)
+            member_to_delete = member_controller.get_member_by_id(delete_id)
+            member_controller.delete_member(member_to_delete)
+        except Exception as ex:
+            print(str(ex))
 
     # Render the template
-    return render_template("admin_member.html", members=Member.query.all(), title="Member admin")
+    return render_template("admin_member.html", members=member_controller.get_all_members(), title="Member admin")
 
 
 @app.route('/admin_race', methods=['GET'])
 @login_required
 def admin_race():
+    """Admin panel to manage races"""
 
     # Testing adding to the DB
     name = request.values.get("name")
@@ -76,43 +84,43 @@ def admin_race():
     info = request.values.get("info")
 
     if name is not None and date is not None and deadline is not None and info is not None:
-        # Convert the parameters
-        created_by_user_id = current_user.id or -1
-        date = datetime.strptime(date, '%Y-%m-%dT%H:%M')
-        deadline = datetime.strptime(deadline, '%Y-%m-%dT%H:%M')
-        new_race = Race(name, date, deadline, created_by_user_id, info)
-
-        # Commit the session
-        db.session.add(new_race)
-        db.session.commit()
+        try:
+            current_id = current_user.id or -1
+            race_controller.add_race(name=name, created_by_user_id=current_id, date=date, deadline=deadline, info=info)
+        except Exception as ex:
+            print(str(ex))
 
     # Render the template
-    return render_template("admin_race.html", races=Race.query.all(), title="Race admin")
+    return render_template("admin_race.html", races=race_controller.get_all_races(), title="Race admin")
 
 
 @app.route('/race_detail/<race_id>', methods=['GET'])
 @login_required
 def race_detail(race_id):
-    race = Race.query.get(race_id)
-    member_signup = None
-    member_signoff = None
+    try:
+        race = race_controller.get_race_by_id(race_id)
+    except Exception as ex:
+        print(str(ex))
+        return redirect("/")
 
-    # TODO: Add logic to check if the current user is admin so he can add another users
-    if request.method == "GET":
-        member_signup = request.values.get("member_signup")
-        member_signoff = request.values.get("member_signoff")
+    member_signup_id = request.values.get("member_signup")
+    member_signoff_id = request.values.get("member_signoff")
 
-        if member_signup is not None:
-            member_signup = int(member_signup)
-            member_to_signup = Member.query.get(member_signup)
-            race.members.append(member_to_signup)
-            db.session.commit()
+    if member_signup_id is not None:
+        try:
+            member_signup_id = int(member_signup_id)
+            member_to_signup = member_controller.get_member_by_id(member_signup_id)
+            race.add_member(member_to_signup)
+        except Exception as ex:
+            print(str(ex))
 
-        if member_signoff is not None:
-            member_signoff = int(member_signoff)
-            member_to_signoff = Member.query.get(member_signoff)
-            race.members.remove(member_to_signoff)
-            db.session.commit()
+    if member_signoff_id is not None:
+        try:
+            member_signoff_id = int(member_signoff_id)
+            member_to_signoff = member_controller.get_member_by_id(member_signoff_id)
+            race.remove_member(member_to_signoff)
+        except Exception as ex:
+            print(str(ex))
 
     return render_template("race_detail.html", race=race)
 
@@ -120,17 +128,19 @@ def race_detail(race_id):
 @app.route('/race_edit/<race_id>', methods=['GET'])
 @login_required
 def race_edit(race_id):
-    race = Race.query.get(race_id)
+    try:
+        race = race_controller.get_race_by_id(race_id)
+    except Exception as ex:
+        print(str(ex))
+        return redirect("/")
 
-    if request.method == "GET":
-        name = request.values.get("name")
-        date = request.values.get("date")
-        deadline = request.values.get("deadline")
-        info = request.values.get("info")
+    name = request.values.get("name")
+    date = request.values.get("date")
+    deadline = request.values.get("deadline")
+    info = request.values.get("info")
 
-        if name is not None and date is not None and deadline is not None and info is not None:
-            print(name, date, deadline, info)
-
+    if name is not None and date is not None and deadline is not None and info is not None:
+        try:
             # Convert the parameters
             date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
             deadline = datetime.strptime(deadline, '%Y-%m-%d %H:%M:%S')
@@ -141,10 +151,12 @@ def race_edit(race_id):
             race.deadline = deadline
             race.info = info
 
-            # Commit the session
+            # Commit the session TODO: Solve this to make it somewhere else
             db.session.commit()
 
             return redirect("/race_detail/%s" % str(race_id))
+        except Exception as ex:
+            print(str(ex))
 
     return render_template("race_edit.html", race=race)
 

@@ -2,14 +2,6 @@
 
 {% block content %}
 
-	<!---
-	name = db.Column(db.String(100), nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
-    deadline = db.Column(db.DateTime, nullable=False)
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('members.id'), nullable=True)
-    info = db.Column(db.Text)
-	--->
-
     <div class="container tab-content">
         <div class="row">
             <form action="/admin_race" role="form">
@@ -35,19 +27,7 @@
                 </div>
             </form>
         </div>
-		<!--
-        <div class="row">
-            <form action="/" role="form">
-                <div class="form-group">
-                    <label>ID pro smazání</label>
-                    <input type="number" class="form-control" name="delete" placeholder="ID" >
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-default">Delete</button>
-                </div>
-            </form>
-        </div>
-		-->
+
 		<div class="row">
             <h3>Všechny závody v databázi</h3>
             <div class="table-responsive">
@@ -63,16 +43,16 @@
                     </tr>
                     </thead>
                     <tbody id="displayArea">
-                    {% for race in races %}
-                        <tr>
-                            <td>{{ race.id }}</td>
-                            <td>{{ race.name }}</td>
-                            <td>{{ race.date }}</td>
-                            <td>{{ race.deadline }}</td>
-                            <td>{{ race.created_by_user_id }}</td>
-                            <td>{{ race.info }}</td>
-                        </tr>
-                    {% endfor %}
+						{% for race in races %}
+							<tr>
+								<td>{{ race.id }}</td>
+								<td>{{ race.name }}</td>
+								<td>{{ race.date }}</td>
+								<td>{{ race.deadline }}</td>
+								<td>{{ race.created_by_user_id }}</td>
+								<td>{{ race.info }}</td>
+							</tr>
+						{% endfor %}
                     </tbody>
                 </table>
             </div>

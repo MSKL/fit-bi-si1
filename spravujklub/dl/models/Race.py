@@ -21,7 +21,6 @@ class Race(db.Model):
     # Members that are registered to the race
     members = db.relationship('Member', secondary='ucast_na_zavode')
 
-
     def __init__(self, name, date, deadline, created_by_user=None, info=None):
         """Name, date, deadline, and created_by_user must be set"""
         self.name = name
@@ -30,6 +29,10 @@ class Race(db.Model):
         self.created_by_user_id = created_by_user
         self.info = info
 
-    def add_member(self, member_id):
-        """Adds a member to the race"""
-        pass
+    def add_member(self, member):
+        self.members.append(member)
+        db.session.commit()
+
+    def remove_member(self, member):
+        self.members.remove(member)
+        db.session.commit()

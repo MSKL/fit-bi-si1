@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
-
+from dl.MemberController import MemberController
 
 # The flask application
+from dl.RaceController import RaceController
+
 app = Flask("__name__")
 Bootstrap(app)
 
@@ -14,6 +16,10 @@ app.config.from_pyfile("config/config_app.py")
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
+
+from database import db
+member_controller = MemberController(db)
+race_controller = RaceController(db)
 
 
 @login_manager.user_loader
