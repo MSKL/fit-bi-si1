@@ -1,4 +1,5 @@
 from database import db
+from dl.models.IRace import IRace
 
 # many to many relationship between race and a member
 tags = db.Table('ucast_na_zavode',
@@ -7,7 +8,7 @@ tags = db.Table('ucast_na_zavode',
 )
 
 
-class Race(db.Model):
+class Race(db.Model, IRace):
     """class representing the app user"""
     __tablename__ = "races"
     # Race data columns
