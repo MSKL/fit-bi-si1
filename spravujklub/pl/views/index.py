@@ -8,5 +8,11 @@ from dl.models.Race import Race
 @login_required
 def index():
     """Index shows the upcoming races"""
+    # Get the races
     races_from_db = Race.query.all()
+
+    # Sort them based on the date
+    races_from_db.sort(key=lambda r: r.date)
+
+    # Draw the page
     return render_template("races.html", races=races_from_db, title="Nadcházející závody")
