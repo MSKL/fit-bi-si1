@@ -4,6 +4,7 @@ from flask_bootstrap import Bootstrap
 
 from dl.MemberController import MemberController
 from dl.RaceController import RaceController
+from database import db
 
 # The flask application
 app = Flask("__name__", template_folder="pl/templates")
@@ -17,7 +18,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-from database import db
+# Setup the DB controllers
 member_controller = MemberController(db)
 race_controller = RaceController(db)
 
@@ -34,7 +35,16 @@ def load_user(user_id):
 
 if __name__ == '__main__':
     # Import the render views after setting up the application
-    from pl.views import *
+    from pl.views.index import *
+    from pl.views.login import *
+    from pl.views.logout import *
+    from pl.views.profile import *
+    from pl.views.admin_member import *
+    from pl.views.admin_race import *
+    from pl.views.race_detail import *
+    from pl.views.race_edit import *
+
+    # Import the config and db
     from _config import config_server
     from database import db
 
