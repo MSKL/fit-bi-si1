@@ -8,6 +8,7 @@ def login():
     """Logs the user into the website"""
 
     # Checks if the user if authotized. If not, redirects him to a login screen.
+    success = True
     if current_user.is_authenticated:
         return redirect("/")
     else:
@@ -18,6 +19,7 @@ def login():
                 member_controller.login_member(login_mail, login_password)
                 return redirect("/")
             except Exception as ex:
+                success = False
                 print(ex)
 
-    return render_template("login.html", title="Login")
+    return render_template("login.html", title="Login", success=success)

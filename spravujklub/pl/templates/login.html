@@ -3,6 +3,12 @@
 {% block content %}
     <div class="container tab-content">
         <div class="row">
+            <div class="alert alert-danger
+                    {% if success %} invisible {% endif %}">
+              <strong>Přihlášení se nezdražilo!</strong> Zadali jste špatné heslo
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4">
                 <form role="form" method="post">
