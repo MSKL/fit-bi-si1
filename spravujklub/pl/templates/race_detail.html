@@ -3,6 +3,12 @@
 {% block content %}
 
 	<div class="container tab-content">
+        <div class="row">
+            <div class="alert alert-danger
+                    {% if success %} invisible {% endif %}">
+              <strong>Nelze se již přihlašovat ani odhlašovat!</strong> Už je po uzávěrce přihlášek
+            </div>
+        </div>
 		<div class="row">
 			<h1>{{ race.name }}</h1>
 			<h3>Informace</h3>

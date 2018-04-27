@@ -1,3 +1,5 @@
+import datetime
+
 from database import db
 from dl.models.IRace import IRace
 
@@ -31,9 +33,13 @@ class Race(db.Model, IRace):
         self.info = info
 
     def add_member(self, member):
+        if datetime.datetime.now() > self.deadline:
+            raise Exception
         self.members.append(member)
         db.session.commit()
 
     def remove_member(self, member):
+        if datetime.datetime.now() > self.deadline:
+            raise Exception
         self.members.remove(member)
         db.session.commit()
