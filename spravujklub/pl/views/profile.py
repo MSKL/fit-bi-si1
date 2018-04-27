@@ -1,6 +1,6 @@
-from flask import request
+from flask import request, render_template
 from flask_login import login_required
-from main import app
+from main import app, member_controller
 
 
 @app.route('/profile/<user_id>', methods = ['GET', 'POST', 'DELETE'])
@@ -15,4 +15,5 @@ def profile(user_id):
     if request.method == 'DELETE':
         """delete user with ID <user_id>"""
 
-    return "Not implemented yet."
+    member = member_controller.get_member_by_id(user_id)
+    return render_template("profile.html", member=member)

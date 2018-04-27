@@ -1,9 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container-fluid tab-content">
 
-        <h1>Not yet implemented</h1>
+	<div class="container tab-content">
+		<div class="row">
+			<h1>Profil uživatele {{ member.name }}</h1>
+        </div>
+			<div class="row">
+				<form action="/profile/{{ member.id }}" role="form">
+					<div class="form-group">
+						<label>Jméno</label>
+						<input type="text" class="form-control" placeholder="Zadejte nové jméno" name="name" value="{{ member.name }}">
+					</div>
+                    <div class="form-group">
+						<label>E-mail</label>
+						<input type="email" class="form-control" placeholder="Zadejte nový email" name="mail" value="{{ member.email }}">
+					</div>
+                    <div class="form-group">
+						<label>Heslo</label>
+						<input type="password" class="form-control" placeholder="Zadejte nové heslo" name="password">
+					</div>
+                    <div class="form-group">
+						<label>Heslo znovu</label>
+						<input type="password" class="form-control" placeholder="Potvrďte nové heslo" name="password_check">
+					</div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default" name="submit">Změnit údaje</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-    </div>
 {% endblock %}
