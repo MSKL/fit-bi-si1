@@ -7,7 +7,7 @@ Jednoduchá implementace systému pro správu sportovního klubu vrámci předm�
 - DB - SQLite + SQLAlchemy
 - IDE - PyCharm (https://www.jetbrains.com/pycharm/)
 
-### Moduly pro python
+### Moduly pro Python
 - flask - webový framework
 - flask-sqlalchemy - DB ORM
 - flask-login - login handling
