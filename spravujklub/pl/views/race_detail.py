@@ -14,6 +14,7 @@ def race_detail(race_id):
     except Exception as ex:
         return redirect(url_for('.index', error=str(ex)))
 
+    # Error message if any
     error = None
 
     # If the member signup is passed

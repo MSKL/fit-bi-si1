@@ -11,11 +11,7 @@ app = Flask("__name__", template_folder="pl/templates")
 Bootstrap(app)
 
 # Setup the _config from file
-app.config.from_pyfile("_config/config_sqlalchemy.py")
-# app.config["DEBUG"] = True
-# app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///database.db'
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-# app.config["SECRET_KEY"] = 'EnterpriseArchitectIsEvil'
+app.config.from_pyfile("_config/config_app.py")
 
 # Setup the login manager and init
 login_manager = LoginManager()
