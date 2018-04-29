@@ -17,7 +17,6 @@ def admin_member():
         try:
             member_controller.create_member(name=name, mail=email, password=password)
         except Exception as ex:
-            print(str(ex))
             error = str(ex)
 
     if delete_id is not None:
@@ -26,7 +25,6 @@ def admin_member():
             member_to_delete = member_controller.get_member_by_id(delete_id)
             member_controller.delete_member(member_to_delete)
         except Exception as ex:
-            error = str(ex)
             print(str(ex))
 
     # Render the template

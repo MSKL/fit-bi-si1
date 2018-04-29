@@ -13,7 +13,12 @@ class MemberController(IMemberController):
         return Member.query.all()
 
     def get_member_by_id(self, id):
-        return Member.query.get(id)
+        member = Member.query.get(id)
+
+        if member is None:
+            raise Exception("Member with id %s not found." % str(id))
+
+        return member
 
     def get_member_by_mail(self, mail):
         return Member.query.filter_by(mail=mail).first()
