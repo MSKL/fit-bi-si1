@@ -20,6 +20,5 @@ def login():
                 return redirect("/")
             except Exception as ex:
                 error = "Přihlášení se nezdařilo"
-                print(ex)
 
     return render_template("login.html", title="Login", error=error)

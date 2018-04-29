@@ -5,12 +5,17 @@ from dl.models.Race import Race
 
 class RaceController(IRaceController):
 
-
     def __init__(self, db):
         self.db = db
 
     def get_race_by_id(self, id):
-        return Race.query.get(id)
+        """Get a race by id. If not found, raise an exception."""
+        race = Race.query.get(id)
+
+        if race is None:
+            raise Exception("Race with id %s not found." % str(id))
+
+        return race
 
     def get_all_races(self):
         """Gets all races in the database"""

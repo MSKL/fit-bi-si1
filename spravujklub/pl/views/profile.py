@@ -8,12 +8,16 @@ from main import app, member_controller
 def profile(user_id):
     # TODO: Anybody can view any member's page ATM.
 
+    """
     if request.method == 'GET':
-        """return the information for <user_id>"""
+        # return the information for <user_id>
     if request.method == 'POST':
-        """modify/update the information for <user_id>"""
+        # modify/update the information for <user_id>
     if request.method == 'DELETE':
-        """delete user with ID <user_id>"""
+        # delete user with ID <user_id>
+    """
+
+    # TODO check if exists
 
     member = None
     error = None

@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect
+from flask import request, render_template, redirect, url_for
 from flask_login import login_required
 from main import app, race_controller
 from datetime import datetime
@@ -8,11 +8,13 @@ from database import db
 @app.route('/race_edit/<race_id>', methods=['GET'])
 @login_required
 def race_edit(race_id):
+    """Edit a race with ID"""
+
+    # Try to get the race from the database. If failed, return to the index with an error.
     try:
         race = race_controller.get_race_by_id(race_id)
     except Exception as ex:
-        print(str(ex))
-        return redirect("/", error=str(ex))
+        return redirect(url_for('.index', error=str(ex)))
 
     name = request.values.get("name")
     date = request.values.get("date")
@@ -38,6 +40,5 @@ def race_edit(race_id):
             return redirect("/race_detail/%s" % str(race_id))
         except Exception as ex:
             error = str(ex)
-            print(str(ex))
 
     return render_template("race_edit.html", race=race, error=error)

@@ -21,7 +21,6 @@ def admin_race():
             race_controller.add_race(name=name, created_by_user_id=current_id, date=date, deadline=deadline, info=info)
         except Exception as ex:
             error = str(ex)
-            print(str(ex))
 
     # Render the template
     return render_template("admin_race.html", races=race_controller.get_all_races(), title="Race admin", error=error)
