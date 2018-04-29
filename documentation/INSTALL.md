@@ -36,3 +36,6 @@ python3 main.py
 Implementovaný protoyp aplikace obsahuje prozatím systém, do kterého se uživatel může přihlásit, a následně se podívat, 
 jaké jsou nadcházející závody na které se může přihlásit. Je taktéž implementován základní login systém. Pokud má 
 uživatel dostatečná oprávnění, je možné i závody editovat a případně mazat.
+
+Testovací uživatel systému má login:
+> email: "mail" heslo: "1234"
