@@ -1,42 +1,39 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block main %}
+    <div class="row">
 
-    <div class="container tab-content">
-        <div class="row">
+        <h1>Nadcházející závody</h1>
 
-            <h1>Nadcházející závody</h1>
-
-            <div class="table-responsive">
-                <table class="table table-bordered" id="mainTable">
-                    <thead>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="mainTable">
+                <thead>
+                <tr>
+                    <th>Název</th>
+                    <th>Datum konání</th>
+                    <th>Uzávěrka přihlášek</th>
+                    <th>Stav</th>
+                    <th>Podrobnosti</th>
+                </tr>
+                </thead>
+                <tbody id="displayArea">
+                {% for race in races %}
                     <tr>
-                        <th>Název</th>
-                        <th>Datum konání</th>
-                        <th>Uzávěrka přihlášek</th>
-                        <th>Stav</th>
-                        <th>Podrobnosti</th>
+                        <td>{{ race.name }}</td>
+                        <td>{{ race.date.strftime("%d.%m.%Y %H:%M") }}</td>
+                        <td>{{ race.deadline.strftime("%d.%m.%Y %H:%M") }}</td>
+                        <td>
+                            {% if current_user in race.members %}
+                                Přihlášen
+                            {% else %}
+                                Nepřihlášen
+                            {% endif %}
+                        </td>
+                        <td><a href="/race_detail/{{ race.id }}">ZDE</a></td>
                     </tr>
-                    </thead>
-                    <tbody id="displayArea">
-                    {% for race in races %}
-                        <tr>
-                            <td>{{ race.name }}</td>
-                            <td>{{ race.date.strftime("%d.%m.%Y %H:%M") }}</td>
-                            <td>{{ race.deadline.strftime("%d.%m.%Y %H:%M") }}</td>
-                            <td>
-								{% if current_user in race.members %}
-									Přihlášen
-                                {% else %}
-									Nepřihlášen
-                                {% endif %}
-                            </td>
-                            <td><a href="/race_detail/{{ race.id }}">ZDE</a></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}

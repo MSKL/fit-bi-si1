@@ -15,14 +15,14 @@ def race_detail(race_id):
     member_signup_id = request.values.get("member_signup")
     member_signoff_id = request.values.get("member_signoff")
 
-    success = True
+    error = None
     if member_signup_id is not None:
         try:
             member_signup_id = int(member_signup_id)
             member_to_signup = member_controller.get_member_by_id(member_signup_id)
             race.add_member(member_to_signup)
         except Exception as ex:
-            success = False
+            error = "Na závod se již není možné přihlásit"
             print(str(ex))
 
     if member_signoff_id is not None:
@@ -31,7 +31,7 @@ def race_detail(race_id):
             member_to_signoff = member_controller.get_member_by_id(member_signoff_id)
             race.remove_member(member_to_signoff)
         except Exception as ex:
-            success = False
+            error = "Ze závodu se již není možné odhlásit"
             print(str(ex))
 
-    return render_template("race_detail.html", race=race, success=success)
+    return render_template("race_detail.html", race=race, error=error)
