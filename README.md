@@ -12,3 +12,6 @@ Jednoduchá implementace systému pro správu sportovního klubu vrámci předm�
 - flask-sqlalchemy - DB ORM
 - flask-login - login handling
 - flask-bootstrap - webový css a js framework
+
+### Model nasazení
+Model nasazení je popsán v souboru [documentation/INSTALL.md](documentation/INSTALL.md)
