@@ -22,4 +22,4 @@ def login():
                 error = "Přihlášení se nezdařilo"
                 print(ex)
 
-    return render_template("login.html", title="Login", error = error)
+    return render_template("login.html", title="Login", error=error)

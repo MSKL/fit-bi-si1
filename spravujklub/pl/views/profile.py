@@ -15,5 +15,12 @@ def profile(user_id):
     if request.method == 'DELETE':
         """delete user with ID <user_id>"""
 
-    member = member_controller.get_member_by_id(user_id)
-    return render_template("profile.html", member=member)
+    member = None
+    error = None
+
+    try:
+        member = member_controller.get_member_by_id(user_id)
+    except Exception as ex:
+        error = str(ex)
+
+    return render_template("profile.html", member=member, error=error)

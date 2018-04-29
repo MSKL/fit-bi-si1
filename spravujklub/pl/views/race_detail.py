@@ -8,6 +8,8 @@ from main import app, member_controller, race_controller
 def race_detail(race_id):
     try:
         race = race_controller.get_race_by_id(race_id)
+        if not race:
+            raise Exception("Race with id not found.")
     except Exception as ex:
         print(str(ex))
         return redirect("/")

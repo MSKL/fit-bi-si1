@@ -2,6 +2,7 @@ from flask import request, render_template, redirect
 from flask_login import login_required
 from main import app, race_controller
 from datetime import datetime
+from database import db
 
 
 @app.route('/race_edit/<race_id>', methods=['GET'])
@@ -11,13 +12,14 @@ def race_edit(race_id):
         race = race_controller.get_race_by_id(race_id)
     except Exception as ex:
         print(str(ex))
-        return redirect("/")
+        return redirect("/", error=str(ex))
 
     name = request.values.get("name")
     date = request.values.get("date")
     deadline = request.values.get("deadline")
     info = request.values.get("info")
 
+    error = None
     if name is not None and date is not None and deadline is not None and info is not None:
         try:
             # Convert the parameters
@@ -35,6 +37,7 @@ def race_edit(race_id):
 
             return redirect("/race_detail/%s" % str(race_id))
         except Exception as ex:
+            error = str(ex)
             print(str(ex))
 
-    return render_template("race_edit.html", race=race)
+    return render_template("race_edit.html", race=race, error=error)
