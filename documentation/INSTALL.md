@@ -14,6 +14,7 @@ Aplikace je napsána v jazyce Python3 s použitím několika modulů.
 - flask_login
 - flask_bootstrap
 - flask_sqlalchemy
+
 Všechny moduly potřebné pro spuštění aplikace jsou vydefinované v souboru requirements.txt. Tyto moduly je nejsnažší nainstalovat pomocí apliakace pip3 pomocí příkazu:
 ```bash
 pip3 install -r requirements.txt
