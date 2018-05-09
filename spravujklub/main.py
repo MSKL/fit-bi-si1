@@ -35,14 +35,7 @@ def load_user(user_id):
 
 if __name__ == '__main__':
     # Import the render views after setting up the application
-    from pl.views.index import *
-    from pl.views.login import *
-    from pl.views.logout import *
-    from pl.views.profile import *
-    from pl.views.admin_member import *
-    from pl.views.admin_race import *
-    from pl.views.race_detail import *
-    from pl.views.race_edit import *
+    from pl.views import *
 
     # Import the config and db
     from _config import config_server

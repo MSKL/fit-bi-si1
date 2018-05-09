@@ -1,6 +1,6 @@
-from dl.IRaceController import IRaceController
+from dl import IRaceController
 from datetime import datetime
-from dl.models.Race import Race
+from dl.models import Race
 
 
 class RaceController(IRaceController):

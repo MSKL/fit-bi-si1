@@ -1,7 +1,7 @@
-from bl.crypto import Crypto
-from dl.IMemberController import IMemberController
-from dl.models.Member import Member
+from dl import IMemberController
+from dl.models import Member
 from flask_login import login_user, logout_user
+from bl import Crypto
 
 
 class MemberController(IMemberController):
