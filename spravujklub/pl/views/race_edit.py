@@ -1,8 +1,8 @@
 from flask import request, render_template, redirect, url_for
 from flask_login import login_required
-from main import app, race_controller
+from spravujklub import app, race_controller
 from datetime import datetime
-from database import db
+from dl.database import db
 
 
 @app.route('/race_edit/<race_id>', methods=['GET'])

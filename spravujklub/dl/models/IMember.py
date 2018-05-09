@@ -1,4 +1,5 @@
 class IMember(object):
+    """Member interface class. Includes all functions that will be needed by Member class."""
 
     def is_authenticated(self):
         """This property should return True if this is an anonymous user. (Actual users should return False instead.)"""
@@ -11,7 +12,7 @@ class IMember(object):
         raise NotImplementedError()
 
     def is_anonymous(self):
-        """Returns true if the user is anonymous."""
+        """Check if the user is anonymous."""
         raise NotImplementedError()
 
     def get_id(self):

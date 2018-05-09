@@ -1,4 +1,5 @@
 class IRaceController(object):
+    """Interface for the database layer used for Race objects."""
 
     def get_race_by_id(self, id):
         """Get a race by ID"""

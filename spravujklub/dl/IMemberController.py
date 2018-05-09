@@ -1,4 +1,5 @@
 class IMemberController(object):
+    """Interface for the database layer used for Member objects."""
 
     def get_all_members(self):
         """Gets all members in the database"""

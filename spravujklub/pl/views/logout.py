@@ -1,6 +1,6 @@
 from flask import request, render_template, redirect
 from flask_login import login_required, current_user
-from main import app, member_controller, race_controller
+from spravujklub import app, member_controller, race_controller
 
 
 @app.route('/logout')

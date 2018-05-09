@@ -1,6 +1,6 @@
 from flask import request, render_template, redirect, url_for
 from flask_login import login_required
-from main import app, member_controller, race_controller
+from spravujklub import app, member_controller, race_controller
 
 
 @app.route('/race_detail/<race_id>', methods=['GET'])

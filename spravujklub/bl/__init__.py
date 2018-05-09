@@ -1,1 +1,1 @@
-from spravujklub.bl.crypto import Crypto
+from bl.crypto import Crypto

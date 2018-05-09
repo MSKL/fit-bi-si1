@@ -1,5 +1,5 @@
 from flask import request, render_template
-from main import app, member_controller
+from spravujklub import app, member_controller
 from flask_login import login_required
 
 

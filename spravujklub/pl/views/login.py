@@ -1,6 +1,6 @@
 from flask import request, render_template, redirect
 from flask_login import current_user
-from main import app, member_controller
+from spravujklub import app, member_controller
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -1,6 +1,6 @@
 from flask import request, render_template
 from flask_login import login_required, current_user
-from main import app, race_controller
+from spravujklub import app, race_controller
 
 
 @app.route('/admin_race', methods=['GET'])
