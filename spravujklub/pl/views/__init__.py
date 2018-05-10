@@ -2,7 +2,7 @@
 This module contains the application endpoints - views. The views are used to render the application pages.
 """
 
-from pl.views.IndexView import IndexView
+from pl.views.IndexView import *
 from pl.views.LoginView import *
 from pl.views.LogoutView import *
 from pl.views.ProfileView import *

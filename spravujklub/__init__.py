@@ -31,7 +31,6 @@ member_controller = MemberController(db)    #: DB member controller
 race_controller = RaceController(db)        #: DB race controller
 
 # Import the views
-from pl.views.interfaces import *
 from pl.views import *
 
 

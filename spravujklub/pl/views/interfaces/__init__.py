@@ -1,2 +1,6 @@
-from pl.views.interfaces.IDefaultView import IDefaultView
-from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
+"""
+This module contains the interfaces for the view functions.
+"""
+
+from pl.views.interfaces.IDefaultView import *
+from pl.views.interfaces.ILoginRequiredView import *

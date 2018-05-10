@@ -1,4 +1,3 @@
-from flask import app
 from flask.views import View
 
 
