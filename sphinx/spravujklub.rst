@@ -5,7 +5,6 @@ Subpackages
 -----------
 
 .. toctree::
-
     spravujklub.bl
     spravujklub.dl
     spravujklub.pl
