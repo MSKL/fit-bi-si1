@@ -1,12 +1,11 @@
 from flask import request, render_template
 from flask_login import login_required, current_user
 from spravujklub import app, race_controller
-from flask.views import View
+from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
 
-class AdminRace(View):
+
+class RaceAdminView(ILoginRequriedView):
     """Administration panel for races"""
-
-    decorators = [login_required]
 
     def dispatch_request(self):
         """Render the race admin panel website"""
@@ -31,6 +30,6 @@ class AdminRace(View):
 
 
 try:
-    app.add_url_rule('/admin_race', view_func=AdminRace.as_view('admin_race'), methods=['GET'])
+    app.add_url_rule('/admin_race', view_func=RaceAdminView.as_view('admin_race'), methods=['GET'])
 except Exception as ex:
     print(str(ex))

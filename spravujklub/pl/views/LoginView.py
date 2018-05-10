@@ -1,10 +1,10 @@
 from flask import request, render_template, redirect
 from flask_login import current_user
 from spravujklub import app, member_controller
-from flask.views import View
+from pl.views.interfaces import IDefaultView
 
 
-class Login(View):
+class LoginView(IDefaultView):
     """This class handles the login of the user"""
 
     def dispatch_request(self):
@@ -28,6 +28,6 @@ class Login(View):
 
 
 try:
-    app.add_url_rule('/login/', view_func=Login.as_view('login'), methods=['GET', 'POST'])
+    app.add_url_rule('/login/', view_func=LoginView.as_view('login'), methods=['GET', 'POST'])
 except Exception as ex:
     print(str(ex))

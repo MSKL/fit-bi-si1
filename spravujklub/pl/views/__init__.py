@@ -2,11 +2,11 @@
 This module contains the application endpoints - views. The views are used to render the application pages.
 """
 
-from pl.views.index import *
-from pl.views.login import *
-from pl.views.logout import *
-from pl.views.profile import *
-from pl.views.admin_member import *
-from pl.views.admin_race import *
-from pl.views.race_detail import *
-from pl.views.race_edit import *
+from pl.views.IndexView import IndexView
+from pl.views.LoginView import *
+from pl.views.LogoutView import *
+from pl.views.ProfileView import *
+from pl.views.MemberAdminView import *
+from pl.views.RaceAdminView import *
+from pl.views.RaceDetailView import *
+from pl.views.RaceEditView import *

@@ -1,13 +1,10 @@
 from flask import render_template, redirect, url_for
-from flask_login import login_required
 from spravujklub import app, member_controller
-from flask.views import View
+from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
 
 
-class Profile(View):
+class ProfileView(ILoginRequriedView):
     """The profile page"""
-
-    decorators = [login_required]
 
     def dispatch_request(self, user_id):
         """Get the user and render the page"""
@@ -23,7 +20,7 @@ class Profile(View):
 
 
 try:
-    app.add_url_rule('/profile/<user_id>', view_func=Profile.as_view('profile'))
+    app.add_url_rule('/profile/<user_id>', view_func=ProfileView.as_view('profile'))
 except Exception as ex:
     print(str(ex))
 

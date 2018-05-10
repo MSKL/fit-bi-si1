@@ -1,12 +1,10 @@
 from flask import request, render_template
 from spravujklub import app, member_controller
-from flask_login import login_required
-from flask.views import View
+from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
 
-class AdminMember(View):
+
+class MemberAdminView(ILoginRequriedView):
     """Member administration panel"""
-
-    decorators = [login_required]
 
     def dispatch_request(self):
         """Render the admin panel website"""
@@ -35,6 +33,6 @@ class AdminMember(View):
 
 
 try:
-    app.add_url_rule('/admin_member', view_func=AdminMember.as_view('admin_member'), methods=['GET'])
+    app.add_url_rule('/admin_member', view_func=MemberAdminView.as_view('admin_member'), methods=['GET'])
 except Exception as ex:
     print(str(ex))

@@ -1,14 +1,11 @@
 from flask import render_template
-from flask_login import login_required
 from spravujklub import app
 from dl.models.Race import Race
-from flask.views import View
+from pl.views.interfaces import ILoginRequriedView
 
 
-class Index(View):
+class IndexView(ILoginRequriedView):
     """Index of the website contains upcoming races."""
-
-    decorators = [login_required]
 
     def dispatch_request(self):
         """Renders the intdex page and shows upcoming races"""
@@ -23,6 +20,6 @@ class Index(View):
 
 
 try:
-    app.add_url_rule('/', view_func=Index.as_view('index'), methods=['GET'])
+    app.add_url_rule('/', view_func=IndexView.as_view('index'), methods=['GET'])
 except Exception as ex:
     print(str(ex))

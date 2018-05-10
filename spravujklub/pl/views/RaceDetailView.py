@@ -1,13 +1,10 @@
 from flask import request, render_template, redirect, url_for
-from flask_login import login_required
 from spravujklub import app, member_controller, race_controller
-from flask.views import View
+from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
 
 
-class RaceDetail(View):
+class RaceDetailView(ILoginRequriedView):
     """Display a detail of a race"""
-
-    decorators = [login_required]
 
     def dispatch_request(self, race_id):
         """View a race with and id and render the page"""
@@ -45,6 +42,6 @@ class RaceDetail(View):
 
 
 try:
-    app.add_url_rule('/race_detail/<race_id>', view_func=RaceDetail.as_view('race_detail'), methods=['GET'])
+    app.add_url_rule('/race_detail/<race_id>', view_func=RaceDetailView.as_view('race_detail'), methods=['GET'])
 except Exception as ex:
     print(str(ex))

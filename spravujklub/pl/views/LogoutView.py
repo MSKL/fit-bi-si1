@@ -1,10 +1,10 @@
 from flask import redirect
 from flask_login import login_required
 from spravujklub import app, member_controller
-from flask.views import View
+from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
 
 
-class Logout(View):
+class LogoutView(ILoginRequriedView):
     """Log out the user"""
 
     decorators = [login_required]
@@ -20,6 +20,6 @@ class Logout(View):
 
 
 try:
-    app.add_url_rule('/logout', view_func=Logout.as_view('logout'), methods=['GET'])
+    app.add_url_rule('/logout', view_func=LogoutView.as_view('logout'), methods=['GET'])
 except Exception as ex:
     print(str(ex))
