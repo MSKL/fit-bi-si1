@@ -7,6 +7,7 @@ class Member(db.Model, IMember):
 
     # The name of the table used in the DB
     __tablename__ = "members"
+    __table_args__ = {'extend_existing': True}
 
     # Member data columns
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

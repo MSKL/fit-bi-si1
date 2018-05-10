@@ -9,12 +9,12 @@ tags = db.Table('ucast_na_zavode',
     db.Column('race_id', db.Integer, db.ForeignKey('races.id'), primary_key=True)
 )
 
-
 class Race(db.Model, IRace):
     """Class representing a single race"""
 
     # Name of the table
     __tablename__ = "races"
+    __table_args__ = {'extend_existing': True}
 
     # Race data columns
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
