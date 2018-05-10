@@ -10,16 +10,21 @@ class Member(db.Model, IMember):
     __table_args__ = {'extend_existing': True}
 
     # Member data columns
+    #: Unique id of the member
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    #: Member's name
     name = db.Column(db.String(50))
+    #: Member's email
     email = db.Column(db.String(50), unique=True)
+    #: Member's password
     password = db.Column(db.String(50))
+    #: Salt for the password
     salt = db.Column(db.String(16))
 
-    # Race id's that the member takes part in
+    #: Race id's that the member takes part in
     races = db.relationship('Race', secondary='ucast_na_zavode')
 
-    # Races this person created
+    #: Races this person created
     created_races = db.relationship('Race', backref='created_by', lazy=True)
 
     def __init__(self, name, email, password, salt):

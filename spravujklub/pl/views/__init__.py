@@ -1,3 +1,7 @@
+"""
+This module contains the application endpoints - views. The views are used to render the application pages.
+"""
+
 from pl.views.index import *
 from pl.views.login import *
 from pl.views.logout import *

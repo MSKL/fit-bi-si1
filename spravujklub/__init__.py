@@ -1,9 +1,12 @@
+"""
+Top level module responsible for creating the application.
+"""
+
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 
 from dl.database import db
-
 
 # The flask application
 app = Flask("__name__", template_folder="pl/templates")

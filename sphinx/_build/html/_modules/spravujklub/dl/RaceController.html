@@ -1,0 +1,159 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="cs">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>spravujklub.dl.RaceController &#8212; Dokumentace pro SpravujKlub 1.0.0</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/translations.js"></script>
+    <link rel="index" title="Rejstřík" href="../../../genindex.html" />
+    <link rel="search" title="Vyhledávání" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Zdrojový kód pro spravujklub.dl.RaceController</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">dl</span> <span class="k">import</span> <span class="n">IRaceController</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">dl.models</span> <span class="k">import</span> <span class="n">Race</span>
+
+
+<div class="viewcode-block" id="RaceController"><a class="viewcode-back" href="../../../spravujklub.dl.html#spravujklub.dl.RaceController.RaceController">[dokumentace]</a><span class="k">class</span> <span class="nc">RaceController</span><span class="p">(</span><span class="n">IRaceController</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Database controller for Race objects.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the controller with a reference to the database.</span>
+
+<span class="sd">        :param db: database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span>
+
+<div class="viewcode-block" id="RaceController.get_race_by_id"><a class="viewcode-back" href="../../../spravujklub.dl.html#spravujklub.dl.RaceController.RaceController.get_race_by_id">[dokumentace]</a>    <span class="k">def</span> <span class="nf">get_race_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a race by id. If not found, raise an exception.</span>
+
+<span class="sd">        :type id: int</span>
+<span class="sd">        :param id: id of the race</span>
+<span class="sd">        :rtype: Race</span>
+<span class="sd">        :return: race with the id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">race</span> <span class="o">=</span> <span class="n">Race</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">race</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Race with id </span><span class="si">%s</span><span class="s2"> not found.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">race</span></div>
+
+<div class="viewcode-block" id="RaceController.get_all_races"><a class="viewcode-back" href="../../../spravujklub.dl.html#spravujklub.dl.RaceController.RaceController.get_all_races">[dokumentace]</a>    <span class="k">def</span> <span class="nf">get_all_races</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets all races in the database</span>
+
+<span class="sd">        :rtype: list</span>
+<span class="sd">        :return: all races in the database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">Race</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RaceController.add_race"><a class="viewcode-back" href="../../../spravujklub.dl.html#spravujklub.dl.RaceController.RaceController.add_race">[dokumentace]</a>    <span class="k">def</span> <span class="nf">add_race</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">created_by_user_id</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">deadline</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a race to the database.</span>
+
+<span class="sd">        :type name: str</span>
+<span class="sd">        :param name: name of the race</span>
+<span class="sd">        :type created_by_user_id: int</span>
+<span class="sd">        :param created_by_user_id: id of the user that created the race</span>
+<span class="sd">        :type date: datetime</span>
+<span class="sd">        :param date: date of the race</span>
+<span class="sd">        :type deadline: datetime</span>
+<span class="sd">        :param deadline: deadline of the race sign in</span>
+<span class="sd">        :type info: str</span>
+<span class="sd">        :param info: information about the race</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Convert the parameters</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M&#39;</span><span class="p">)</span>
+        <span class="n">deadline</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">deadline</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M&#39;</span><span class="p">)</span>
+        <span class="n">new_race</span> <span class="o">=</span> <span class="n">Race</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">deadline</span><span class="p">,</span> <span class="n">created_by_user_id</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+
+        <span class="c1"># Commit the session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_race</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RaceController.delete_race"><a class="viewcode-back" href="../../../spravujklub.dl.html#spravujklub.dl.RaceController.RaceController.delete_race">[dokumentace]</a>    <span class="k">def</span> <span class="nf">delete_race</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">race</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a race from the database.</span>
+
+<span class="sd">        :type race: Race</span>
+<span class="sd">        :param race: race to be deleted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: not implemented yet</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Kód modulu</a><ul>
+  <li><a href="../../spravujklub.html">spravujklub</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Rychlé vyhledávání</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="OK" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Matyáš Skalický.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

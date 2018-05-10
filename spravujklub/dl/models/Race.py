@@ -4,10 +4,14 @@ from dl.database import db
 from dl.models.IRace import IRace
 
 # many to many relationship between race and a member
-tags = db.Table('ucast_na_zavode',
-    db.Column('member_id', db.Integer, db.ForeignKey('members.id'), primary_key=True),
-    db.Column('race_id', db.Integer, db.ForeignKey('races.id'), primary_key=True)
-)
+try:
+    tags = db.Table('ucast_na_zavode',
+        db.Column('member_id', db.Integer, db.ForeignKey('members.id'), primary_key=True),
+        db.Column('race_id', db.Integer, db.ForeignKey('races.id'), primary_key=True)
+    )
+except Exception as ex:
+    print(str(ex))
+
 
 class Race(db.Model, IRace):
     """Class representing a single race"""
@@ -17,16 +21,21 @@ class Race(db.Model, IRace):
     __table_args__ = {'extend_existing': True}
 
     # Race data columns
+    #: Unique race ID
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    #: Name of the race
     name = db.Column(db.String(100), nullable=False)
+    #: Datetime of the race
     date = db.Column(db.DateTime, nullable=False)
+    #: Deadline of the race signup
     deadline = db.Column(db.DateTime, nullable=False)
+    #: Information about the race
     info = db.Column(db.Text)
 
-    # Foreign key to the member that created this race
+    #: Foreign key to the member that created this race
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('members.id'))
 
-    # Members that are registered to the race
+    #: Members that are registered to the race
     members = db.relationship('Member', secondary='ucast_na_zavode')
 
     def __init__(self, name, date, deadline, created_by_user=None, info=None):

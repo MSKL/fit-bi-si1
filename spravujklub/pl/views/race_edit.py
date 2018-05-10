@@ -5,6 +5,7 @@ from datetime import datetime
 from dl.database import db
 from flask.views import View
 
+
 class RaceEdit(View):
     """Page that allows the user to edit a race."""
 

@@ -1,7 +1,8 @@
-from flask import request, render_template, redirect
-from flask_login import login_required, current_user
-from spravujklub import app, member_controller, race_controller
+from flask import redirect
+from flask_login import login_required
+from spravujklub import app, member_controller
 from flask.views import View
+
 
 class Logout(View):
     """Log out the user"""
