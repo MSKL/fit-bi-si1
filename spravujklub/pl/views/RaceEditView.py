@@ -45,6 +45,7 @@ class RaceEditView(ILoginRequriedView):
         return render_template("race_edit.html", race=race, error=error)
 
 
+# Catch the errors on import to successfully generate the documentation
 try:
     app.add_url_rule('/race_edit/<race_id>', view_func=RaceEditView.as_view('race_edit'), methods=['GET'])
 except Exception as ex:

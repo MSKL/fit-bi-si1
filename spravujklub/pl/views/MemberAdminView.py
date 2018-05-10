@@ -32,6 +32,7 @@ class MemberAdminView(ILoginRequriedView):
         return render_template("admin_member.html", members=member_controller.get_all_members(), title="Member admin", error=error)
 
 
+# Catch the errors on import to successfully generate the documentation
 try:
     app.add_url_rule('/admin_member', view_func=MemberAdminView.as_view('admin_member'), methods=['GET'])
 except Exception as ex:

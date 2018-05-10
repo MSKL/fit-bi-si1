@@ -19,6 +19,7 @@ class LogoutView(ILoginRequriedView):
         return redirect("/")
 
 
+# Catch the errors on import to successfully generate the documentation
 try:
     app.add_url_rule('/logout', view_func=LogoutView.as_view('logout'), methods=['GET'])
 except Exception as ex:

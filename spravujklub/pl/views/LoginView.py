@@ -27,6 +27,7 @@ class LoginView(IDefaultView):
         return render_template("login.html", title="Login", error=error)
 
 
+# Catch the errors on import to successfully generate the documentation
 try:
     app.add_url_rule('/login/', view_func=LoginView.as_view('login'), methods=['GET', 'POST'])
 except Exception as ex:

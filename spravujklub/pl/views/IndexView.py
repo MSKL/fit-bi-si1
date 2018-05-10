@@ -19,6 +19,7 @@ class IndexView(ILoginRequriedView):
         return render_template("races.html", races=races_from_db, title="Nadcházející závody")
 
 
+# Catch the errors on import to successfully generate the documentation
 try:
     app.add_url_rule('/', view_func=IndexView.as_view('index'), methods=['GET'])
 except Exception as ex:

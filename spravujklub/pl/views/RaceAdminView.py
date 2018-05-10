@@ -29,6 +29,7 @@ class RaceAdminView(ILoginRequriedView):
         return render_template("admin_race.html", races=race_controller.get_all_races(), title="Race admin", error=error)
 
 
+# Catch the errors on import to successfully generate the documentation
 try:
     app.add_url_rule('/admin_race', view_func=RaceAdminView.as_view('admin_race'), methods=['GET'])
 except Exception as ex:
