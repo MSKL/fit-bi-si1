@@ -95,6 +95,12 @@
 <div class="section" id="module-spravujklub">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-spravujklub" title="Trvalý odkaz na tento nadpis">¶</a></h2>
 <p>Top level module responsible for creating the application.</p>
+<dl class="data">
+<dt id="spravujklub.app">
+<code class="descclassname">spravujklub.</code><code class="descname">app</code><em class="property"> = &lt;Flask '__name__'&gt;</em><a class="headerlink" href="#spravujklub.app" title="Trvalý odkaz na tuto definici">¶</a></dt>
+<dd><p>Create a flask app</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="spravujklub.load_user">
 <code class="descclassname">spravujklub.</code><code class="descname">load_user</code><span class="sig-paren">(</span><em>user_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spravujklub.html#load_user"><span class="viewcode-link">[zdroj]</span></a><a class="headerlink" href="#spravujklub.load_user" title="Trvalý odkaz na tuto definici">¶</a></dt>
@@ -108,6 +114,24 @@
 </table>
 <p>Should take the unicode ID of a user, and return the corresponding user object.
 This function if required by the flask_login. Should not be removed.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="spravujklub.login_manager">
+<code class="descclassname">spravujklub.</code><code class="descname">login_manager</code><em class="property"> = &lt;flask_login.login_manager.LoginManager object&gt;</em><a class="headerlink" href="#spravujklub.login_manager" title="Trvalý odkaz na tuto definici">¶</a></dt>
+<dd><p>Login manager</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="spravujklub.member_controller">
+<code class="descclassname">spravujklub.</code><code class="descname">member_controller</code><em class="property"> = &lt;dl.MemberController.MemberController object&gt;</em><a class="headerlink" href="#spravujklub.member_controller" title="Trvalý odkaz na tuto definici">¶</a></dt>
+<dd><p>DB member controller</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="spravujklub.race_controller">
+<code class="descclassname">spravujklub.</code><code class="descname">race_controller</code><em class="property"> = &lt;dl.RaceController.RaceController object&gt;</em><a class="headerlink" href="#spravujklub.race_controller" title="Trvalý odkaz na tuto definici">¶</a></dt>
+<dd><p>DB race controller</p>
 </dd></dl>
 
 <dl class="function">
