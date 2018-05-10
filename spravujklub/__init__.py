@@ -5,15 +5,18 @@ Top level module responsible for creating the application.
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+import os
 
 from dl.database import db
 
 # The flask application
-app = Flask("__name__", template_folder="pl/templates")
+templatepath = os.path.dirname(__file__) + "/pl/templates"
+app = Flask("__name__", template_folder=templatepath)
 Bootstrap(app)
 
 # Setup the _config from file
-app.config.from_pyfile("../spravujklub/_config/config_app.py")
+configpath = os.path.dirname(__file__) + "/_config/config_app.py"
+app.config.from_pyfile(configpath)
 
 # Setup the login manager and init
 login_manager = LoginManager()
@@ -44,7 +47,7 @@ def load_user(user_id):
     return Member.query.get(user_id)
 
 
-if __name__ == '__main__':
+def run():
     """Run the application"""
 
     # Import the config and db
@@ -56,3 +59,7 @@ if __name__ == '__main__':
 
     # Run the application
     app.run(host=config_server.host, port=config_server.port)
+
+
+if __name__ == '__main__':
+    run()

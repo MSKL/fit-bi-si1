@@ -30,7 +30,7 @@ na kterém bude služba běžet. Pokud není tento soubor změněn, běží apli
 ## 4. Spuštění aplikace
 Posledním krokem při nasazování této aplikace je její spuštění. Spuštění lze docílit zadáním:
 ```bash
-python3 __init__.py 
+python3 run.py
 ```
 
 Implementovaný protoyp aplikace obsahuje prozatím systém, do kterého se uživatel může přihlásit, a následně se podívat, 
