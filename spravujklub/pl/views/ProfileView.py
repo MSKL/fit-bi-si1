@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for
-from spravujklub import app, member_controller
+from spravujklub import member_controller
 from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
 
 
@@ -19,11 +19,6 @@ class ProfileView(ILoginRequriedView):
         return render_template("profile.html", member=member)
 
 
-# Catch the errors on import to successfully generate the documentation
-try:
-    app.add_url_rule('/profile/<user_id>', view_func=ProfileView.as_view('profile'))
-except Exception as ex:
-    print(str(ex))
 
 
 

@@ -1,0 +1,556 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="cs">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>flask_login.login_manager &#8212; Dokumentace pro SpravujKlub 1.0.0</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/translations.js"></script>
+    <link rel="index" title="Rejstřík" href="../../genindex.html" />
+    <link rel="search" title="Vyhledávání" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Zdrojový kód pro flask_login.login_manager</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    flask_login.login_manager</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    The LoginManager class.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="p">(</span><span class="n">_request_ctx_stack</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span>
+                   <span class="n">request</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">._compat</span> <span class="k">import</span> <span class="n">text_type</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="k">import</span> <span class="p">(</span><span class="n">COOKIE_NAME</span><span class="p">,</span> <span class="n">COOKIE_DURATION</span><span class="p">,</span> <span class="n">COOKIE_SECURE</span><span class="p">,</span>
+                     <span class="n">COOKIE_HTTPONLY</span><span class="p">,</span> <span class="n">LOGIN_MESSAGE</span><span class="p">,</span> <span class="n">LOGIN_MESSAGE_CATEGORY</span><span class="p">,</span>
+                     <span class="n">REFRESH_MESSAGE</span><span class="p">,</span> <span class="n">REFRESH_MESSAGE_CATEGORY</span><span class="p">,</span> <span class="n">ID_ATTRIBUTE</span><span class="p">,</span>
+                     <span class="n">AUTH_HEADER_NAME</span><span class="p">,</span> <span class="n">SESSION_KEYS</span><span class="p">,</span> <span class="n">USE_SESSION_FOR_NEXT</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.mixins</span> <span class="k">import</span> <span class="n">AnonymousUserMixin</span>
+<span class="kn">from</span> <span class="nn">.signals</span> <span class="k">import</span> <span class="p">(</span><span class="n">user_loaded_from_cookie</span><span class="p">,</span> <span class="n">user_loaded_from_header</span><span class="p">,</span>
+                      <span class="n">user_loaded_from_request</span><span class="p">,</span> <span class="n">user_unauthorized</span><span class="p">,</span>
+                      <span class="n">user_needs_refresh</span><span class="p">,</span> <span class="n">user_accessed</span><span class="p">,</span> <span class="n">session_protected</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">_get_user</span><span class="p">,</span> <span class="n">login_url</span> <span class="k">as</span> <span class="n">make_login_url</span><span class="p">,</span> <span class="n">_create_identifier</span><span class="p">,</span>
+                    <span class="n">_user_context_processor</span><span class="p">,</span> <span class="n">encode_cookie</span><span class="p">,</span> <span class="n">decode_cookie</span><span class="p">,</span>
+                    <span class="n">make_next_param</span><span class="p">,</span> <span class="n">expand_login_view</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LoginManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;This object is used to hold the settings used for logging in. Instances</span>
+<span class="sd">    of :class:`LoginManager` are *not* bound to specific apps, so you can</span>
+<span class="sd">    create one in the main body of your code and then bind it to your</span>
+<span class="sd">    app in a factory function.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_context_processor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="c1">#: A class or factory function that produces an anonymous user, which</span>
+        <span class="c1">#: is used when no one is logged in.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anonymous_user</span> <span class="o">=</span> <span class="n">AnonymousUserMixin</span>
+
+        <span class="c1">#: The name of the view to redirect to when the user needs to log in.</span>
+        <span class="c1">#: (This can be an absolute URL as well, if your authentication</span>
+        <span class="c1">#: machinery is external to your application.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_view</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1">#: Names of views to redirect to when the user needs to log in,</span>
+        <span class="c1">#: per blueprint. If the key value is set to None the value of</span>
+        <span class="c1">#: :attr:`login_view` will be used instead.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blueprint_login_views</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1">#: The message to flash when a user is redirected to the login page.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_message</span> <span class="o">=</span> <span class="n">LOGIN_MESSAGE</span>
+
+        <span class="c1">#: The message category to flash when a user is redirected to the login</span>
+        <span class="c1">#: page.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_message_category</span> <span class="o">=</span> <span class="n">LOGIN_MESSAGE_CATEGORY</span>
+
+        <span class="c1">#: The name of the view to redirect to when the user needs to</span>
+        <span class="c1">#: reauthenticate.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_view</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1">#: The message to flash when a user is redirected to the &#39;needs</span>
+        <span class="c1">#: refresh&#39; page.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_message</span> <span class="o">=</span> <span class="n">REFRESH_MESSAGE</span>
+
+        <span class="c1">#: The message category to flash when a user is redirected to the</span>
+        <span class="c1">#: &#39;needs refresh&#39; page.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_message_category</span> <span class="o">=</span> <span class="n">REFRESH_MESSAGE_CATEGORY</span>
+
+        <span class="c1">#: The mode to use session protection in. This can be either</span>
+        <span class="c1">#: ``&#39;basic&#39;`` (the default) or ``&#39;strong&#39;``, or ``None`` to disable</span>
+        <span class="c1">#: it.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_protection</span> <span class="o">=</span> <span class="s1">&#39;basic&#39;</span>
+
+        <span class="c1">#: If present, used to translate flash messages ``self.login_message``</span>
+        <span class="c1">#: and ``self.needs_refresh_message``</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">localize_callback</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_callback</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">unauthorized_callback</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_callback</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_attribute</span> <span class="o">=</span> <span class="n">ID_ATTRIBUTE</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_callback</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_callback</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session_identifier_generator</span> <span class="o">=</span> <span class="n">_create_identifier</span>
+
+        <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">add_context_processor</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setup_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">add_context_processor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This method has been deprecated. Please use</span>
+<span class="sd">        :meth:`LoginManager.init_app` instead.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Warning setup_app is deprecated. Please use init_app.&#39;</span><span class="p">,</span>
+                      <span class="ne">DeprecationWarning</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">add_context_processor</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">add_context_processor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Configures an application. This registers an `after_request` call, and</span>
+<span class="sd">        attaches this `LoginManager` to it as `app.login_manager`.</span>
+
+<span class="sd">        :param app: The :class:`flask.Flask` object to configure.</span>
+<span class="sd">        :type app: :class:`flask.Flask`</span>
+<span class="sd">        :param add_context_processor: Whether to add a context processor to</span>
+<span class="sd">            the app that adds a `current_user` variable to the template.</span>
+<span class="sd">            Defaults to ``True``.</span>
+<span class="sd">        :type add_context_processor: bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">login_manager</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">after_request</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_remember_cookie</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_login_disabled</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LOGIN_DISABLED&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">add_context_processor</span><span class="p">:</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">context_processor</span><span class="p">(</span><span class="n">_user_context_processor</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">unauthorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This is called when the user is required to log in. If you register a</span>
+<span class="sd">        callback with :meth:`LoginManager.unauthorized_handler`, then it will</span>
+<span class="sd">        be called. Otherwise, it will take the following actions:</span>
+
+<span class="sd">            - Flash :attr:`LoginManager.login_message` to the user.</span>
+
+<span class="sd">            - If the app is using blueprints find the login view for</span>
+<span class="sd">              the current blueprint using `blueprint_login_views`. If the app</span>
+<span class="sd">              is not using blueprints or the login view for the current</span>
+<span class="sd">              blueprint is not specified use the value of `login_view`.</span>
+
+<span class="sd">            - Redirect the user to the login view. (The page they were</span>
+<span class="sd">              attempting to access will be passed in the ``next`` query</span>
+<span class="sd">              string variable, so you can redirect there if present instead</span>
+<span class="sd">              of the homepage. Alternatively, it will be added to the session</span>
+<span class="sd">              as ``next`` if USE_SESSION_FOR_NEXT is set.)</span>
+
+<span class="sd">        If :attr:`LoginManager.login_view` is not defined, then it will simply</span>
+<span class="sd">        raise a HTTP 401 (Unauthorized) error instead.</span>
+
+<span class="sd">        This should be returned from a view or before/after_request function,</span>
+<span class="sd">        otherwise the redirect will have no effect.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">user_unauthorized</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unauthorized_callback</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unauthorized_callback</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">blueprint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">blueprint_login_views</span><span class="p">:</span>
+            <span class="n">login_view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blueprint_login_views</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">blueprint</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">login_view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">login_view</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">login_view</span><span class="p">:</span>
+            <span class="n">abort</span><span class="p">(</span><span class="mi">401</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">login_message</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">localize_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">flash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localize_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">login_message</span><span class="p">),</span>
+                      <span class="n">category</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">login_message_category</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">login_message</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">login_message_category</span><span class="p">)</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;USE_SESSION_FOR_NEXT&#39;</span><span class="p">,</span> <span class="n">USE_SESSION_FOR_NEXT</span><span class="p">):</span>
+            <span class="n">login_url</span> <span class="o">=</span> <span class="n">expand_login_view</span><span class="p">(</span><span class="n">login_view</span><span class="p">)</span>
+            <span class="n">session</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_next_param</span><span class="p">(</span><span class="n">login_url</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">redirect_url</span> <span class="o">=</span> <span class="n">make_login_url</span><span class="p">(</span><span class="n">login_view</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">redirect_url</span> <span class="o">=</span> <span class="n">make_login_url</span><span class="p">(</span><span class="n">login_view</span><span class="p">,</span> <span class="n">next_url</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">redirect_url</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">user_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This sets the callback for reloading a user from the session. The</span>
+<span class="sd">        function you set should take a user ID (a ``unicode``) and return a</span>
+<span class="sd">        user object, or ``None`` if the user does not exist.</span>
+
+<span class="sd">        :param callback: The callback for retrieving a user object.</span>
+<span class="sd">        :type callback: callable</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="k">return</span> <span class="n">callback</span>
+
+    <span class="k">def</span> <span class="nf">header_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This function has been deprecated. Please use</span>
+<span class="sd">        :meth:`LoginManager.request_loader` instead.</span>
+
+<span class="sd">        This sets the callback for loading a user from a header value.</span>
+<span class="sd">        The function you set should take an authentication token and</span>
+<span class="sd">        return a user object, or `None` if the user does not exist.</span>
+
+<span class="sd">        :param callback: The callback for retrieving a user object.</span>
+<span class="sd">        :type callback: callable</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="k">return</span> <span class="n">callback</span>
+
+    <span class="k">def</span> <span class="nf">request_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This sets the callback for loading a user from a Flask request.</span>
+<span class="sd">        The function you set should take Flask request object and</span>
+<span class="sd">        return a user object, or `None` if the user does not exist.</span>
+
+<span class="sd">        :param callback: The callback for retrieving a user object.</span>
+<span class="sd">        :type callback: callable</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="k">return</span> <span class="n">callback</span>
+
+    <span class="k">def</span> <span class="nf">unauthorized_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This will set the callback for the `unauthorized` method, which among</span>
+<span class="sd">        other things is used by `login_required`. It takes no arguments, and</span>
+<span class="sd">        should return a response to be sent to the user instead of their</span>
+<span class="sd">        normal view.</span>
+
+<span class="sd">        :param callback: The callback for unauthorized users.</span>
+<span class="sd">        :type callback: callable</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unauthorized_callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="k">return</span> <span class="n">callback</span>
+
+    <span class="k">def</span> <span class="nf">needs_refresh_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This will set the callback for the `needs_refresh` method, which among</span>
+<span class="sd">        other things is used by `fresh_login_required`. It takes no arguments,</span>
+<span class="sd">        and should return a response to be sent to the user instead of their</span>
+<span class="sd">        normal view.</span>
+
+<span class="sd">        :param callback: The callback for unauthorized users.</span>
+<span class="sd">        :type callback: callable</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="k">return</span> <span class="n">callback</span>
+
+    <span class="k">def</span> <span class="nf">needs_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This is called when the user is logged in, but they need to be</span>
+<span class="sd">        reauthenticated because their session is stale. If you register a</span>
+<span class="sd">        callback with `needs_refresh_handler`, then it will be called.</span>
+<span class="sd">        Otherwise, it will take the following actions:</span>
+
+<span class="sd">            - Flash :attr:`LoginManager.needs_refresh_message` to the user.</span>
+
+<span class="sd">            - Redirect the user to :attr:`LoginManager.refresh_view`. (The page</span>
+<span class="sd">              they were attempting to access will be passed in the ``next``</span>
+<span class="sd">              query string variable, so you can redirect there if present</span>
+<span class="sd">              instead of the homepage.)</span>
+
+<span class="sd">        If :attr:`LoginManager.refresh_view` is not defined, then it will</span>
+<span class="sd">        simply raise a HTTP 401 (Unauthorized) error instead.</span>
+
+<span class="sd">        This should be returned from a view or before/after_request function,</span>
+<span class="sd">        otherwise the redirect will have no effect.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">user_needs_refresh</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_callback</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_callback</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">refresh_view</span><span class="p">:</span>
+            <span class="n">abort</span><span class="p">(</span><span class="mi">401</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">localize_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localize_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_message</span><span class="p">),</span>
+                  <span class="n">category</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_message_category</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_message</span><span class="p">,</span>
+                  <span class="n">category</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">needs_refresh_message_category</span><span class="p">)</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;USE_SESSION_FOR_NEXT&#39;</span><span class="p">,</span> <span class="n">USE_SESSION_FOR_NEXT</span><span class="p">):</span>
+            <span class="n">login_url</span> <span class="o">=</span> <span class="n">expand_login_view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh_view</span><span class="p">)</span>
+            <span class="n">session</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_next_param</span><span class="p">(</span><span class="n">login_url</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">redirect_url</span> <span class="o">=</span> <span class="n">make_login_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh_view</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">login_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">refresh_view</span>
+            <span class="n">redirect_url</span> <span class="o">=</span> <span class="n">make_login_url</span><span class="p">(</span><span class="n">login_url</span><span class="p">,</span> <span class="n">next_url</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">redirect_url</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reload_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This set the ctx.user with the user object loaded by your customized</span>
+<span class="sd">        user_loader callback function, which should retrieved the user object</span>
+<span class="sd">        with the user_id got from session.</span>
+
+<span class="sd">        Syntax example:</span>
+<span class="sd">        from flask_login import LoginManager</span>
+<span class="sd">        @login_manager.user_loader</span>
+<span class="sd">        def any_valid_func_name(user_id):</span>
+<span class="sd">            # get your user object using the given user_id,</span>
+<span class="sd">            # if you use SQLAlchemy, for example:</span>
+<span class="sd">            user_obj = User.query.get(int(user_id))</span>
+<span class="sd">            return user_obj</span>
+
+<span class="sd">        Reason to let YOU define this self.user_callback:</span>
+<span class="sd">            Because we won&#39;t know how/where you will load you user object.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">_request_ctx_stack</span><span class="o">.</span><span class="n">top</span>
+
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">user_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ctx</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymous_user</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_callback</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="s2">&quot;No user_loader has been installed for this &quot;</span>
+                        <span class="s2">&quot;LoginManager. Refer to&quot;</span>
+                        <span class="s2">&quot;https://flask-login.readthedocs.io/&quot;</span>
+                        <span class="s2">&quot;en/latest/#how-it-works for more info.&quot;</span><span class="p">)</span>
+                <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_callback</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ctx</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymous_user</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ctx</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+
+    <span class="k">def</span> <span class="nf">_load_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Loads user from session or remember_me cookie as applicable&#39;&#39;&#39;</span>
+        <span class="n">user_accessed</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">())</span>
+
+        <span class="c1"># first check SESSION_PROTECTION</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SESSION_PROTECTION&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_protection</span><span class="p">):</span>
+            <span class="n">deleted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session_protection</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">deleted</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reload_user</span><span class="p">()</span>
+
+        <span class="c1"># If a remember cookie is set, and the session is not, move the</span>
+        <span class="c1"># cookie user ID to the session.</span>
+        <span class="c1">#</span>
+        <span class="c1"># However, the session may have been set if the user has been</span>
+        <span class="c1"># logged out on this request, &#39;remember&#39; would be set to clear,</span>
+        <span class="c1"># so we should check for that and not restore the session.</span>
+        <span class="n">is_missing_user_id</span> <span class="o">=</span> <span class="s1">&#39;user_id&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">session</span>
+        <span class="k">if</span> <span class="n">is_missing_user_id</span><span class="p">:</span>
+            <span class="n">cookie_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_NAME&#39;</span><span class="p">,</span> <span class="n">COOKIE_NAME</span><span class="p">)</span>
+            <span class="n">header_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;AUTH_HEADER_NAME&#39;</span><span class="p">,</span> <span class="n">AUTH_HEADER_NAME</span><span class="p">)</span>
+            <span class="n">has_cookie</span> <span class="o">=</span> <span class="p">(</span><span class="n">cookie_name</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span> <span class="ow">and</span>
+                          <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;remember&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">has_cookie</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_from_cookie</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="p">[</span><span class="n">cookie_name</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_callback</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_from_request</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">header_name</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_from_header</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">header_name</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reload_user</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_session_protection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sess</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">()</span>
+        <span class="n">ident</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session_identifier_generator</span><span class="p">()</span>
+
+        <span class="n">app</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">()</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SESSION_PROTECTION&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_protection</span><span class="p">)</span>
+
+        <span class="c1"># if the sess is empty, it&#39;s an anonymous user or just logged out</span>
+        <span class="c1"># so we can skip this</span>
+
+        <span class="k">if</span> <span class="n">sess</span> <span class="ow">and</span> <span class="n">ident</span> <span class="o">!=</span> <span class="n">sess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;basic&#39;</span> <span class="ow">or</span> <span class="n">sess</span><span class="o">.</span><span class="n">permanent</span><span class="p">:</span>
+                <span class="n">sess</span><span class="p">[</span><span class="s1">&#39;_fresh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">session_protected</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;strong&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">SESSION_KEYS</span><span class="p">:</span>
+                    <span class="n">sess</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="n">sess</span><span class="p">[</span><span class="s1">&#39;remember&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;clear&#39;</span>
+                <span class="n">session_protected</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_load_from_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookie</span><span class="p">):</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">decode_cookie</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_id</span>
+            <span class="n">session</span><span class="p">[</span><span class="s1">&#39;_fresh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reload_user</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">_request_ctx_stack</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">()</span>
+            <span class="n">user_loaded_from_cookie</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">_get_user</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_load_from_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_callback</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_callback</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reload_user</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">()</span>
+            <span class="n">user_loaded_from_header</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">_get_user</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reload_user</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_load_from_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_callback</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_callback</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reload_user</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">()</span>
+            <span class="n">user_loaded_from_request</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">_get_user</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reload_user</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_remember_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="c1"># Don&#39;t modify the session unless there&#39;s something to do.</span>
+        <span class="k">if</span> <span class="s1">&#39;remember&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">session</span> <span class="ow">and</span> \
+                <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_REFRESH_EACH_REQUEST&#39;</span><span class="p">):</span>
+            <span class="n">session</span><span class="p">[</span><span class="s1">&#39;remember&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;set&#39;</span>
+
+        <span class="k">if</span> <span class="s1">&#39;remember&#39;</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">operation</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;remember&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">operation</span> <span class="o">==</span> <span class="s1">&#39;set&#39;</span> <span class="ow">and</span> <span class="s1">&#39;user_id&#39;</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_cookie</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">operation</span> <span class="o">==</span> <span class="s1">&#39;clear&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cookie</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="k">def</span> <span class="nf">_set_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="c1"># cookie settings</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span>
+        <span class="n">cookie_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_NAME&#39;</span><span class="p">,</span> <span class="n">COOKIE_NAME</span><span class="p">)</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_DOMAIN&#39;</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_PATH&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+        <span class="n">secure</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_SECURE&#39;</span><span class="p">,</span> <span class="n">COOKIE_SECURE</span><span class="p">)</span>
+        <span class="n">httponly</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_HTTPONLY&#39;</span><span class="p">,</span> <span class="n">COOKIE_HTTPONLY</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;remember_seconds&#39;</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;remember_seconds&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_DURATION&#39;</span><span class="p">,</span> <span class="n">COOKIE_DURATION</span><span class="p">)</span>
+
+        <span class="c1"># prepare data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">encode_cookie</span><span class="p">(</span><span class="n">text_type</span><span class="p">(</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">expires</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">+</span> <span class="n">duration</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_DURATION must be a &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;datetime.timedelta, instead got: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="n">duration</span><span class="p">))</span>
+
+        <span class="c1"># actually set it</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="n">cookie_name</span><span class="p">,</span>
+                            <span class="n">value</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                            <span class="n">expires</span><span class="o">=</span><span class="n">expires</span><span class="p">,</span>
+                            <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
+                            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                            <span class="n">secure</span><span class="o">=</span><span class="n">secure</span><span class="p">,</span>
+                            <span class="n">httponly</span><span class="o">=</span><span class="n">httponly</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_clear_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span>
+        <span class="n">cookie_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_NAME&#39;</span><span class="p">,</span> <span class="n">COOKIE_NAME</span><span class="p">)</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_DOMAIN&#39;</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REMEMBER_COOKIE_PATH&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="n">cookie_name</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Kód modulu</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Rychlé vyhledávání</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="OK" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Matyáš Skalický.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

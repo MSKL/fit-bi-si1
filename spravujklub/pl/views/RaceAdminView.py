@@ -1,6 +1,6 @@
 from flask import request, render_template
-from flask_login import login_required, current_user
-from spravujklub import app, race_controller
+from flask_login import current_user
+from spravujklub import race_controller
 from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
 
 
@@ -29,8 +29,3 @@ class RaceAdminView(ILoginRequriedView):
         return render_template("admin_race.html", races=race_controller.get_all_races(), title="Race admin", error=error)
 
 
-# Catch the errors on import to successfully generate the documentation
-try:
-    app.add_url_rule('/admin_race', view_func=RaceAdminView.as_view('admin_race'), methods=['GET'])
-except Exception as ex:
-    print(str(ex))

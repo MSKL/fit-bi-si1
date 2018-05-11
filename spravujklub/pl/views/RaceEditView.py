@@ -1,5 +1,5 @@
 from flask import request, render_template, redirect, url_for
-from spravujklub import app, race_controller
+from spravujklub import race_controller
 from datetime import datetime
 from dl.database import db
 from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
@@ -45,8 +45,3 @@ class RaceEditView(ILoginRequriedView):
         return render_template("race_edit.html", race=race, error=error)
 
 
-# Catch the errors on import to successfully generate the documentation
-try:
-    app.add_url_rule('/race_edit/<race_id>', view_func=RaceEditView.as_view('race_edit'), methods=['GET'])
-except Exception as ex:
-    print(str(ex))

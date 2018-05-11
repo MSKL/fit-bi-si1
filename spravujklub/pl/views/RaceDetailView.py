@@ -1,5 +1,5 @@
 from flask import request, render_template, redirect, url_for
-from spravujklub import app, member_controller, race_controller
+from spravujklub import member_controller, race_controller
 from pl.views.interfaces.ILoginRequiredView import ILoginRequriedView
 
 
@@ -41,8 +41,3 @@ class RaceDetailView(ILoginRequriedView):
         return render_template("race_detail.html", race=race, error=error)
 
 
-# Catch the errors on import to successfully generate the documentation
-try:
-    app.add_url_rule('/race_detail/<race_id>', view_func=RaceDetailView.as_view('race_detail'), methods=['GET'])
-except Exception as ex:
-    print(str(ex))

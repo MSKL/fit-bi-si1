@@ -5,6 +5,8 @@ Top level module responsible for creating the application.
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from dl.MemberController import MemberController
+from dl.RaceController import RaceController
 import os
 
 from dl.database import db
@@ -24,31 +26,44 @@ login_manager.login_view = 'login'                      #: Name of the login vie
 login_manager.init_app(app)
 
 # Setup the DB controllers
-from dl.MemberController import MemberController
-from dl.RaceController import RaceController
-
 member_controller = MemberController(db)                #: DB member controller
 race_controller = RaceController(db)                    #: DB race controller
 
-# Import the views
 from pl.views import *
 
 
 @login_manager.user_loader
 def load_user(user_id):
     """
-    :type user_id: int
-    :param user_id:
-
     Should take the unicode ID of a user, and return the corresponding user object.
     This function if required by the flask_login. Should not be removed.
+
+    :type user_id: int
+    :param user_id:
     """
 
     from dl.models.Member import Member
     return Member.query.get(user_id)
 
 
-def run():
+def register_views(_app):
+    """
+    Register all views to the application
+
+    :param _app: flask application
+    """
+
+    _app.add_url_rule('/', view_func=IndexView.as_view('index'), methods=['GET'])
+    _app.add_url_rule('/login/', view_func=LoginView.as_view('login'), methods=['GET', 'POST'])
+    _app.add_url_rule('/logout', view_func=LogoutView.as_view('logout'), methods=['GET'])
+    _app.add_url_rule('/admin_member', view_func=MemberAdminView.as_view('admin_member'), methods=['GET'])
+    _app.add_url_rule('/profile/<user_id>', view_func=ProfileView.as_view('profile'))
+    _app.add_url_rule('/admin_race', view_func=RaceAdminView.as_view('admin_race'), methods=['GET'])
+    _app.add_url_rule('/race_detail/<race_id>', view_func=RaceDetailView.as_view('race_detail'), methods=['GET'])
+    _app.add_url_rule('/race_edit/<race_id>', view_func=RaceEditView.as_view('race_edit'), methods=['GET'])
+
+
+def run_app():
     """Run the application"""
 
     # Import the config and db
@@ -58,9 +73,11 @@ def run():
     # Register the app in the database
     db.init_app(app)
 
-    #_ Run the application
+    # Register the views into the app
+    try:
+        register_views(app)
+    except Exception as ex:
+        print(str(ex))
+
+    # Run the application
     app.run(host=config_server.host, port=config_server.port)
-
-
-if __name__ == '__main__':
-    run()

@@ -1,5 +1,4 @@
 from flask import render_template
-from spravujklub import app
 from dl.models.Race import Race
 from pl.views.interfaces import ILoginRequriedView
 
@@ -17,10 +16,3 @@ class IndexView(ILoginRequriedView):
 
         # Draw the page
         return render_template("races.html", races=races_from_db, title="Nadcházející závody")
-
-
-# Catch the errors on import to successfully generate the documentation
-try:
-    app.add_url_rule('/', view_func=IndexView.as_view('index'), methods=['GET'])
-except Exception as ex:
-    print(str(ex))

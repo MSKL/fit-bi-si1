@@ -1,6 +1,6 @@
 from flask import request, render_template, redirect
 from flask_login import current_user
-from spravujklub import app, member_controller
+from spravujklub import member_controller
 from pl.views.interfaces import IDefaultView
 
 
@@ -29,6 +29,6 @@ class LoginView(IDefaultView):
 
 # Catch the errors on import to successfully generate the documentation
 try:
-    app.add_url_rule('/login/', view_func=LoginView.as_view('login'), methods=['GET', 'POST'])
+    pass
 except Exception as ex:
     print(str(ex))
