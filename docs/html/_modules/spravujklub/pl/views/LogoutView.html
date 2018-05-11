@@ -33,14 +33,12 @@
   <h1>Zdrojový kód pro spravujklub.pl.views.LogoutView</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">redirect</span>
 <span class="kn">from</span> <span class="nn">flask_login</span> <span class="k">import</span> <span class="n">login_required</span>
-<span class="kn">from</span> <span class="nn">spravujklub</span> <span class="k">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">member_controller</span>
+<span class="kn">from</span> <span class="nn">spravujklub</span> <span class="k">import</span> <span class="n">member_controller</span>
 <span class="kn">from</span> <span class="nn">pl.views.interfaces.ILoginRequiredView</span> <span class="k">import</span> <span class="n">ILoginRequriedView</span>
 
 
 <div class="viewcode-block" id="LogoutView"><a class="viewcode-back" href="../../../../spravujklub.pl.views.html#spravujklub.pl.views.LogoutView.LogoutView">[dokumentace]</a><span class="k">class</span> <span class="nc">LogoutView</span><span class="p">(</span><span class="n">ILoginRequriedView</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Log out the user&quot;&quot;&quot;</span>
-
-    <span class="n">decorators</span> <span class="o">=</span> <span class="p">[</span><span class="n">login_required</span><span class="p">]</span>
 
 <div class="viewcode-block" id="LogoutView.dispatch_request"><a class="viewcode-back" href="../../../../spravujklub.pl.views.html#spravujklub.pl.views.LogoutView.LogoutView.dispatch_request">[dokumentace]</a>    <span class="k">def</span> <span class="nf">dispatch_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Logs out the current user and then redirects to the index&quot;&quot;&quot;</span>
@@ -50,12 +48,6 @@
             <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span></div></div>
-
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/logout&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">LogoutView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;logout&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
 </pre></div>
 
           </div>

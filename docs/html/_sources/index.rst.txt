@@ -12,10 +12,6 @@ Tento projekt byl vytvořen v rámci předmětu BI-SI1 a je postaven na modulu f
 - **bl** - business logika aplikace
 - **pl** - prezenční vrstva aplikace
 
-.. automodule:: pl
-   :maxdepth: 3
-   :members:
-
 .. toctree::
    :maxdepth: 3
    :caption: Struktura aplikace:

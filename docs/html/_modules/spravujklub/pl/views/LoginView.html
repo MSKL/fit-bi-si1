@@ -33,7 +33,7 @@
   <h1>Zdrojový kód pro spravujklub.pl.views.LoginView</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span>
 <span class="kn">from</span> <span class="nn">flask_login</span> <span class="k">import</span> <span class="n">current_user</span>
-<span class="kn">from</span> <span class="nn">spravujklub</span> <span class="k">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">member_controller</span>
+<span class="kn">from</span> <span class="nn">spravujklub</span> <span class="k">import</span> <span class="n">member_controller</span>
 <span class="kn">from</span> <span class="nn">pl.views.interfaces</span> <span class="k">import</span> <span class="n">IDefaultView</span>
 
 
@@ -60,8 +60,9 @@
         <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;login.html&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Login&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">)</span></div></div>
 
 
+<span class="c1"># Catch the errors on import to successfully generate the documentation</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/login/&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">LoginView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+    <span class="k">pass</span>
 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
 </pre></div>

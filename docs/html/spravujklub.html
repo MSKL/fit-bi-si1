@@ -114,7 +114,9 @@
 <dl class="function">
 <dt id="spravujklub.load_user">
 <code class="descclassname">spravujklub.</code><code class="descname">load_user</code><span class="sig-paren">(</span><em>user_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spravujklub.html#load_user"><span class="viewcode-link">[zdroj]</span></a><a class="headerlink" href="#spravujklub.load_user" title="Trvalý odkaz na tuto definici">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>Should take the unicode ID of a user, and return the corresponding user object.
+This function if required by the flask_login. Should not be removed.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -122,8 +124,6 @@
 </tr>
 </tbody>
 </table>
-<p>Should take the unicode ID of a user, and return the corresponding user object.
-This function if required by the flask_login. Should not be removed.</p>
 </dd></dl>
 
 <dl class="data">
@@ -145,8 +145,22 @@ This function if required by the flask_login. Should not be removed.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="spravujklub.run">
-<code class="descclassname">spravujklub.</code><code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spravujklub.html#run"><span class="viewcode-link">[zdroj]</span></a><a class="headerlink" href="#spravujklub.run" title="Trvalý odkaz na tuto definici">¶</a></dt>
+<dt id="spravujklub.register_views">
+<code class="descclassname">spravujklub.</code><code class="descname">register_views</code><span class="sig-paren">(</span><em>_app</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spravujklub.html#register_views"><span class="viewcode-link">[zdroj]</span></a><a class="headerlink" href="#spravujklub.register_views" title="Trvalý odkaz na tuto definici">¶</a></dt>
+<dd><p>Register all views to the application</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parametry:</th><td class="field-body"><strong>_app</strong> – flask application</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="spravujklub.run_app">
+<code class="descclassname">spravujklub.</code><code class="descname">run_app</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spravujklub.html#run_app"><span class="viewcode-link">[zdroj]</span></a><a class="headerlink" href="#spravujklub.run_app" title="Trvalý odkaz na tuto definici">¶</a></dt>
 <dd><p>Run the application</p>
 </dd></dl>
 

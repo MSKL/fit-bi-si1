@@ -38,6 +38,8 @@
 <span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Flask</span>
 <span class="kn">from</span> <span class="nn">flask_login</span> <span class="k">import</span> <span class="n">LoginManager</span>
 <span class="kn">from</span> <span class="nn">flask_bootstrap</span> <span class="k">import</span> <span class="n">Bootstrap</span>
+<span class="kn">from</span> <span class="nn">dl.MemberController</span> <span class="k">import</span> <span class="n">MemberController</span>
+<span class="kn">from</span> <span class="nn">dl.RaceController</span> <span class="k">import</span> <span class="n">RaceController</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">dl.database</span> <span class="k">import</span> <span class="n">db</span>
@@ -45,43 +47,56 @@
 <span class="c1"># The flask application</span>
 <span class="n">template_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/pl/templates&quot;</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="n">template_path</span><span class="p">)</span>  <span class="c1">#: Create a flask app</span>
-<span class="n">Bootstrap</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>  <span class="c1">#: Register the bootstrap module</span>
+<span class="n">Bootstrap</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>                                          <span class="c1">#: Register the bootstrap module</span>
 
 <span class="c1"># Setup the _config from file</span>
 <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/_config/config_app.py&quot;</span>
-<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_pyfile</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_pyfile</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>                     <span class="c1">#: Path to the app configuration file</span>
 
 <span class="c1"># Setup the login manager and init</span>
-<span class="n">login_manager</span> <span class="o">=</span> <span class="n">LoginManager</span><span class="p">()</span>  <span class="c1">#: Login manager</span>
-<span class="n">login_manager</span><span class="o">.</span><span class="n">login_view</span> <span class="o">=</span> <span class="s1">&#39;login&#39;</span>
+<span class="n">login_manager</span> <span class="o">=</span> <span class="n">LoginManager</span><span class="p">()</span>                          <span class="c1">#: Login manager</span>
+<span class="n">login_manager</span><span class="o">.</span><span class="n">login_view</span> <span class="o">=</span> <span class="s1">&#39;login&#39;</span>                      <span class="c1">#: Name of the login view</span>
 <span class="n">login_manager</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
 
 <span class="c1"># Setup the DB controllers</span>
-<span class="kn">from</span> <span class="nn">dl.MemberController</span> <span class="k">import</span> <span class="n">MemberController</span>
-<span class="kn">from</span> <span class="nn">dl.RaceController</span> <span class="k">import</span> <span class="n">RaceController</span>
+<span class="n">member_controller</span> <span class="o">=</span> <span class="n">MemberController</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>                <span class="c1">#: DB member controller</span>
+<span class="n">race_controller</span> <span class="o">=</span> <span class="n">RaceController</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>                    <span class="c1">#: DB race controller</span>
 
-<span class="n">member_controller</span> <span class="o">=</span> <span class="n">MemberController</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>    <span class="c1">#: DB member controller</span>
-<span class="n">race_controller</span> <span class="o">=</span> <span class="n">RaceController</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>        <span class="c1">#: DB race controller</span>
-
-<span class="c1"># Import the views</span>
 <span class="kn">from</span> <span class="nn">pl.views</span> <span class="k">import</span> <span class="o">*</span>
 
 
 <div class="viewcode-block" id="load_user"><a class="viewcode-back" href="../spravujklub.html#spravujklub.load_user">[dokumentace]</a><span class="nd">@login_manager</span><span class="o">.</span><span class="n">user_loader</span>
 <span class="k">def</span> <span class="nf">load_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :type user_id: int</span>
-<span class="sd">    :param user_id:</span>
-
 <span class="sd">    Should take the unicode ID of a user, and return the corresponding user object.</span>
 <span class="sd">    This function if required by the flask_login. Should not be removed.</span>
+
+<span class="sd">    :type user_id: int</span>
+<span class="sd">    :param user_id:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="kn">from</span> <span class="nn">dl.models.Member</span> <span class="k">import</span> <span class="n">Member</span>
     <span class="k">return</span> <span class="n">Member</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="run"><a class="viewcode-back" href="../spravujklub.html#spravujklub.run">[dokumentace]</a><span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+<div class="viewcode-block" id="register_views"><a class="viewcode-back" href="../spravujklub.html#spravujklub.register_views">[dokumentace]</a><span class="k">def</span> <span class="nf">register_views</span><span class="p">(</span><span class="n">_app</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register all views to the application</span>
+
+<span class="sd">    :param _app: flask application</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">IndexView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/login/&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">LoginView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/logout&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">LogoutView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;logout&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/admin_member&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">MemberAdminView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;admin_member&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/profile/&lt;user_id&gt;&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">ProfileView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">))</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/admin_race&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">RaceAdminView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;admin_race&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/race_detail/&lt;race_id&gt;&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">RaceDetailView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;race_detail&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/race_edit/&lt;race_id&gt;&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">RaceEditView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;race_edit&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="run_app"><a class="viewcode-back" href="../spravujklub.html#spravujklub.run_app">[dokumentace]</a><span class="k">def</span> <span class="nf">run_app</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Run the application&quot;&quot;&quot;</span>
 
     <span class="c1"># Import the config and db</span>
@@ -91,12 +106,14 @@
     <span class="c1"># Register the app in the database</span>
     <span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
 
-    <span class="c1">#_ Run the application</span>
+    <span class="c1"># Register the views into the app</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">register_views</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
+
+    <span class="c1"># Run the application</span>
     <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">config_server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">config_server</span><span class="o">.</span><span class="n">port</span><span class="p">)</span></div>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">run</span><span class="p">()</span>
 </pre></div>
 
           </div>

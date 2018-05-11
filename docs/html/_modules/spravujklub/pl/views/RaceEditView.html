@@ -32,7 +32,7 @@
             
   <h1>Zdrojový kód pro spravujklub.pl.views.RaceEditView</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span>
-<span class="kn">from</span> <span class="nn">spravujklub</span> <span class="k">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">race_controller</span>
+<span class="kn">from</span> <span class="nn">spravujklub</span> <span class="k">import</span> <span class="n">race_controller</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">dl.database</span> <span class="k">import</span> <span class="n">db</span>
 <span class="kn">from</span> <span class="nn">pl.views.interfaces.ILoginRequiredView</span> <span class="k">import</span> <span class="n">ILoginRequriedView</span>
@@ -78,10 +78,6 @@
         <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;race_edit.html&quot;</span><span class="p">,</span> <span class="n">race</span><span class="o">=</span><span class="n">race</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">)</span></div></div>
 
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/race_edit/&lt;race_id&gt;&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">RaceEditView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;race_edit&#39;</span><span class="p">),</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
 </pre></div>
 
           </div>
