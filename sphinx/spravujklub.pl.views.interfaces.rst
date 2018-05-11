@@ -1,6 +1,11 @@
 spravujklub.pl.views.interfaces package
 =======================================
 
+.. automodule:: spravujklub.pl.views.interfaces
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -21,10 +26,3 @@ spravujklub.pl.views.interfaces.ILoginRequiredView module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: spravujklub.pl.views.interfaces
-    :members:
-    :undoc-members:
-    :show-inheritance:

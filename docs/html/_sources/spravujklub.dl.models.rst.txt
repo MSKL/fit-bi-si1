@@ -1,6 +1,11 @@
 spravujklub.dl.models package
 =============================
 
+.. automodule:: spravujklub.dl.models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -37,10 +42,3 @@ spravujklub.dl.models.Race module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: spravujklub.dl.models
-    :members:
-    :undoc-members:
-    :show-inheritance:

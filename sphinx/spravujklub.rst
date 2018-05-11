@@ -1,6 +1,11 @@
 spravujklub package
 ===================
 
+.. automodule:: spravujklub
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -10,10 +15,3 @@ Subpackages
     spravujklub.dl
     spravujklub.pl
 
-Module contents
----------------
-
-.. automodule:: spravujklub
-    :members:
-    :undoc-members:
-    :show-inheritance:

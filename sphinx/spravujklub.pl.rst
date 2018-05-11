@@ -1,6 +1,11 @@
 spravujklub.pl package
 ======================
 
+.. automodule:: spravujklub.pl
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -8,10 +13,3 @@ Subpackages
 
     spravujklub.pl.views
 
-Module contents
----------------
-
-.. automodule:: spravujklub.pl
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -1,6 +1,11 @@
 spravujklub.bl package
 ======================
 
+.. automodule:: spravujklub.bl
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -13,10 +18,3 @@ spravujklub.bl.crypto module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: spravujklub.bl
-    :members:
-    :undoc-members:
-    :show-inheritance:

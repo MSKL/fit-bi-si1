@@ -1,6 +1,11 @@
 spravujklub.pl.views package
 ============================
 
+.. automodule:: spravujklub.pl.views
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -76,10 +81,3 @@ spravujklub.pl.views.RaceEditView module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: spravujklub.pl.views
-    :members:
-    :undoc-members:
-    :show-inheritance:
