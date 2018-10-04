@@ -14,4 +14,4 @@ Jednoduchá implementace systému pro správu sportovního klubu vrámci předm�
 - flask-bootstrap - webový css a js framework
 
 ### Model nasazení
-Model nasazení je popsán v souboru [documentation/INSTALL.md](documentation/INSTALL.md)
+Model nasazení je popsán v souboru [INSTALL.md](INSTALL.md)
